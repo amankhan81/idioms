@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100 Common Idioms for Friendly Emails</title>
+    <title>100 Essential Idioms for IGCSE English</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Fonts: Kalam (Handwriting) and Nunito (Friendly Sans-Serif) -->
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), and Graduate (Title) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS */
         .handwriting {
@@ -25,6 +25,12 @@
             color: #15803d; /* Dark Green (green-700) */
             font-weight: 600;
             font-size: 1rem;
+        }
+        /* Stylish Title Font: Graduate, Red, Bold */
+        .main-title {
+            font-family: 'Graduate', cursive;
+            color: #dc2626; /* Red-600 */
+            font-weight: 700;
         }
         .speaker-btn {
             background-color: transparent;
@@ -52,15 +58,15 @@
     <main class="flex-grow p-4 sm:p-8">
         <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 sm:p-10">
             <header class="text-center mb-10 border-b-4 border-blue-500 pb-4">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800">
-                    100 Essential Idioms for Friendly Email Writing
+                <h1 class="main-title text-3xl sm:text-4xl md:text-4xl mb-2">
+                    100 Essential Idioms for IGCSE English
                 </h1>
                 <p class="text-lg text-gray-500 mt-2">
-                    IGCSE English 0510 Paper 1, Exercise 5 - Make your emails sound natural and engaging!
+                    Paper 1, Exercise 5 - Make your emails sound natural and engaging!
                 </p>
             </header>
 
-            <!-- JavaScript function to enable audio playback (FIXED to stop previous audio) -->
+            <!-- JavaScript function to enable audio playback (single track at a time) -->
             <script>
                 // Variable to hold the currently playing audio element
                 let currentAudio = null;
@@ -76,7 +82,7 @@
 
                 /**
                  * Plays the actual audio file associated with the idiom, stopping any previous audio.
-                 * @param {string} filename - The name of the audio file (e.g., 'over_the_moon.mp3').
+                 * @param {string} filename - The name of the audio file.
                  * @param {string} idiom - The idiom being played.
                  */
                 function playAudio(filename, idiom) {
@@ -86,7 +92,6 @@
                     if (currentAudio && !currentAudio.paused) {
                         currentAudio.pause();
                         currentAudio.currentTime = 0; // Reset playback position
-                        console.log("Previous audio stopped.");
                     }
                     
                     // 2. Create the new audio object
@@ -97,9 +102,7 @@
 
                     // 4. Start playback
                     newAudio.play().catch(e => {
-                        // Log errors if audio fails to load or play
                         console.error(`Error playing audio for ${idiom} (file: ${filename}). Ensure the file exists and is correctly named.`, e);
-                        // Optionally reset currentAudio if playback fails immediately
                         currentAudio = null; 
                     });
                 }
