@@ -45,9 +45,25 @@
             transform: scale(1.1);
             color: #059669;
         }
+        /* Quiz Feedback Styles */
+        .quiz-option:hover:not([disabled]) {
+            background-color: #eff6ff; /* Blue-50 */
+        }
+        .correct-answer {
+            background-color: #d1fae5; /* Green-100 */
+            border-color: #10b981; /* Emerald-500 */
+            box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+        .incorrect-answer {
+            background-color: #fee2e2; /* Red-100 */
+            border-color: #f87171; /* Red-400 */
+        }
+        .quiz-option[disabled] {
+            cursor: default;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans" onload="renderIdiomList()">
 
     <!-- New Full-Width Blue Header -->
     <div class="w-full bg-blue-600 text-white py-4 text-center font-bold text-xl shadow-md">
@@ -57,6 +73,7 @@
     <!-- Main Content Wrapper with Padding -->
     <main class="flex-grow p-4 sm:p-8">
         <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 sm:p-10">
+            
             <header class="text-center mb-10 border-b-4 border-blue-500 pb-4">
                 <h1 class="main-title text-3xl sm:text-4xl md:text-4xl mb-2">
                     100 Essential Idioms for IGCSE English
@@ -66,1252 +83,399 @@
                 </p>
             </header>
 
-            <!-- JavaScript function to enable audio playback (single track at a time) -->
+            <!-- Quiz Script and Data -->
             <script>
                 // Variable to hold the currently playing audio element
                 let currentAudio = null;
+                const FEEDBACK_DELAY_MS = 1500; // Time to show feedback before next question
 
-                /**
-                 * Converts an idiom string into a snake_case filename, adding the .mp3 extension.
-                 * @param {string} idiom - The idiom string.
-                 * @returns {string} The suggested filename.
-                 */
+                // --- MASTER LIST OF 100 IDIOMS ---
+                const ALL_IDIOMS_DATA = [
+                    { id: 1, idiom: "Over the moon", emoji: "😊", meaning: "Extremely happy and delighted.", example: "I was __ when I heard I got the concert tickets!", correctWord: "over the moon" },
+                    { id: 2, idiom: "A piece of cake", emoji: "🍰", meaning: "Something very easy to do.", example: "Don't worry about the history test, it'll be __ for you.", correctWord: "a piece of cake" },
+                    { id: 3, idiom: "Take a rain check", emoji: "☔", meaning: "To politely decline an invitation, but offer to do it later.", example: "I can't make it to the party tonight, but can I __ for next time?", correctWord: "take a rain check" },
+                    { id: 4, idiom: "Let the cat out of the bag", emoji: "🐈", meaning: "To accidentally reveal a secret.", example: "Oops! I think I __ about your surprise party.", correctWord: "let the cat out of the bag" },
+                    { id: 5, idiom: "Speak of the devil", emoji: "🗣️", meaning: "Said when the person you were just talking about unexpectedly appears.", example: "__, Jane just walked into the room!", correctWord: "Speak of the devil" },
+                    { id: 6, idiom: "Every cloud has a silver lining", emoji: "☁️", meaning: "Be optimistic; difficult times will lead to better days.", example: "I know failing the exam was tough, but remember, __.", correctWord: "every cloud has a silver lining" },
+                    { id: 7, idiom: "Under the weather", emoji: "🤕", meaning: "Slightly ill or unwell.", example: "I'm feeling a bit __ today, so I'll stay home from school.", correctWord: "under the weather" },
+                    { id: 8, idiom: "Cut a long story short", emoji: "✂️", meaning: "To tell the main points and omit unnecessary details.", example: "To __, we missed the last train and had to walk home.", correctWord: "cut a long story short" },
+                    { id: 9, idiom: "See eye to eye", emoji: "👀", meaning: "To agree completely with someone.", example: "Luckily, my study partner and I __ on how to plan our project.", correctWord: "see eye to eye" },
+                    { id: 10, idiom: "Back to the drawing board", emoji: "✏️", meaning: "To start over after a plan or idea has failed.", example: "The experiment failed, so it's __ for our science group.", correctWord: "back to the drawing board" },
+                    { id: 11, idiom: "The ball is in your court", emoji: "🏀", meaning: "It is up to you to make the next decision or step.", example: "I've given you my advice; now __ to decide.", correctWord: "the ball is in your court" },
+                    { id: 12, idiom: "Cost an arm and a leg", emoji: "💰", meaning: "To be very expensive.", example: "Those new headphones must __!", correctWord: "cost an arm and a leg" },
+                    { id: 13, idiom: "Go the extra mile", emoji: "🥇", meaning: "To make a special effort to achieve something.", example: "She always __ to help her younger sister with homework.", correctWord: "goes the extra mile" },
+                    { id: 14, idiom: "Hit the nail on the head", emoji: "📌", meaning: "To describe exactly what is causing a situation or problem.", example: "That's right, you __! I completely forgot about the deadline.", correctWord: "hit the nail on the head" },
+                    { id: 15, idiom: "Bite the bullet", emoji: "😬", meaning: "To face a difficult or unpleasant situation with courage.", example: "I don't want to tell my parents, but I have to __ and admit I lost the book.", correctWord: "bite the bullet" },
+                    { id: 16, idiom: "Burn the midnight oil", emoji: "📚", meaning: "To stay up late working or studying.", example: "We had to __ last night to finish the history presentation.", correctWord: "burn the midnight oil" },
+                    { id: 17, idiom: "Call it a day", emoji: "⏸️", meaning: "To stop working on something; to finish for the day.", example: "It's getting late. Let's __ and finish this tomorrow morning.", correctWord: "call it a day" },
+                    { id: 18, idiom: "Hang in there", emoji: "💪", meaning: "Don't give up; persist (often used as encouragement).", example: "The training is tough, but __! You'll be great.", correctWord: "hang in there" },
+                    { id: 19, idiom: "A blessing in disguise", emoji: "🎁", meaning: "Something that seems bad or unlucky at first but results in something good later on.", example: "Missing the early bus was __ because I got a better seat on the next one.", correctWord: "a blessing in disguise" },
+                    { id: 20, idiom: "Get something off one's chest", emoji: "🗣️", meaning: "To confess or talk about something that has been worrying you.", example: "I need to __; can we meet for coffee?", correctWord: "get something off my chest" },
+                    { id: 21, idiom: "Keep an eye on", emoji: "👂", meaning: "To watch or look after carefully.", example: "Can you __ my bag while I quickly get a drink?", correctWord: "keep an eye on" },
+                    { id: 22, idiom: "Miss the boat", emoji: "🚢", meaning: "To miss an opportunity.", example: "The deadline for applications passed yesterday; I totally __.", correctWord: "missed the boat" },
+                    { id: 23, idiom: "Pull someone's leg", emoji: "😂", meaning: "To joke or tease someone.", example: "Wait, were you serious, or are you just __ about the field trip?", correctWord: "pulling my leg" },
+                    { id: 24, idiom: "Get your act together", emoji: "🛑", meaning: "To organize oneself and behave more effectively.", example: "You need to __ if you want to pass the final exams.", correctWord: "get your act together" },
+                    { id: 25, idiom: "Give it a shot", emoji: "👍", meaning: "To try something.", example: "I'm not sure if I can do it, but I'll __ anyway!", correctWord: "give it a shot" },
+                    { id: 26, idiom: "Think outside the box", emoji: "💡", meaning: "To think creatively and unconventionally.", example: "For this project, we need to __ to come up with a truly unique idea.", correctWord: "think outside the box" },
+                    { id: 27, idiom: "Once in a blue moon", emoji: "🌙", meaning: "Very rarely.", example: "I only watch a movie with my parents __, so it's a special treat.", correctWord: "once in a blue moon" },
+                    { id: 28, idiom: "Hit the sack", emoji: "😴", meaning: "To go to bed.", example: "I'm exhausted after that long trip, I need to __.", correctWord: "hit the sack" },
+                    { id: 29, idiom: "The whole nine yards", emoji: "🎯", meaning: "Everything; all of it.", example: "For his birthday party, we got him a cake, presents, and balloons – __.", correctWord: "the whole nine yards" },
+                    { id: 30, idiom: "On the same page", emoji: "🤝", meaning: "To be in agreement about something.", example: "Let's quickly review the plan to make sure we're all __.", correctWord: "on the same page" },
+                    { id: 31, idiom: "Couch potato", emoji: "🛋️", meaning: "A very lazy person who spends a lot of time watching TV.", example: "Don't be such a __ this weekend; let's go outside!", correctWord: "couch potato" },
+                    { id: 32, idiom: "Wrap my head around", emoji: "🧠", meaning: "To understand something complicated or strange.", example: "I'm finding it hard to __ the physics concepts we learned today.", correctWord: "wrap my head around" },
+                    { id: 33, idiom: "Read between the lines", emoji: "📘", meaning: "To understand the hidden or implied meaning.", example: "She said she was 'fine', but if you __, you can tell she's upset.", correctWord: "read between the lines" },
+                    { id: 34, idiom: "The icing on the cake", emoji: "👑", meaning: "An extra benefit or positive element that makes a good situation even better.", example: "Getting the job offer was great, but the big salary increase was __.", correctWord: "the icing on the cake" },
+                    { id: 35, idiom: "When pigs fly", emoji: "🐷", meaning: "Something that will never happen.", example: "He'll apologize for what he did __!", correctWord: "when pigs fly" },
+                    { id: 36, idiom: "Skating on thin ice", emoji: "🥶", meaning: "To be in a risky situation.", example: "If you keep skipping classes, you'll be __ with the principal.", correctWord: "skating on thin ice" },
+                    { id: 37, idiom: "A drop in the ocean", emoji: "💧", meaning: "A tiny amount compared to what is needed.", example: "The money we raised is just __ compared to the total needed for the project.", correctWord: "a drop in the ocean" },
+                    { id: 38, idiom: "The apple of my eye", emoji: "🍎", meaning: "A person who is cherished above all others.", example: "My younger cousin is absolutely __.", correctWord: "the apple of my eye" },
+                    { id: 39, idiom: "Mum's the word", emoji: "🤫", meaning: "Keep the matter a secret; don't tell anyone.", example: "The party is a secret, so remember, __ until Friday!", correctWord: "mum's the word" },
+                    { id: 40, idiom: "Catch up", emoji: "🎉", meaning: "To meet someone after a period of time to share news.", example: "I haven't seen you in ages! We must __ soon.", correctWord: "catch up" },
+                    { id: 41, idiom: "Lend a hand", emoji: "🤝", meaning: "Help with something or assist someone.", example: "Can you __ with setting up the decorations for the party?", correctWord: "lend a hand" },
+                    { id: 42, idiom: "Hold your horses", emoji: "🐴", meaning: "Wait a moment or slow down.", example: "Just __ for a minute, I need to check the exact time of the meeting.", correctWord: "hold your horses" },
+                    { id: 43, idiom: "A dime a dozen", emoji: "🪙", meaning: "Very common and easily found.", example: "Good study guides are __ online, so don't pay too much for one.", correctWord: "a dime a dozen" },
+                    { id: 44, idiom: "All ears", emoji: "👂", meaning: "Eager and ready to listen.", example: "Tell me about your trip—I'm __!", correctWord: "all ears" },
+                    { id: 45, idiom: "Put all your eggs in one basket", emoji: "🥚", meaning: "To risk everything on one venture.", example: "It's better to apply to a few universities and not __.", correctWord: "put all your eggs in one basket" },
+                    { id: 46, idiom: "Jump on the bandwagon", emoji: "🚌", meaning: "To join an activity or trend that has become popular.", example: "Everyone started wearing those shoes, so I decided to __ too.", correctWord: "jump on the bandwagon" },
+                    { id: 47, idiom: "To make matters worse", emoji: "📉", meaning: "To make a bad situation even more difficult or unpleasant.", example: "First, I missed the bus, and then, __, it started raining heavily.", correctWord: "to make matters worse" },
+                    { id: 48, idiom: "Give the benefit of the doubt", emoji: "❓", meaning: "To accept someone's statement or excuse as true, without proof.", example: "I'll __ and assume she just forgot to reply to the email.", correctWord: "give her the benefit of the doubt" },
+                    { id: 49, idiom: "Head over heels", emoji: "🤸", meaning: "Madly in love or extremely enthusiastic about something.", example: "I am __ about the new concert venue; it looks amazing!", correctWord: "head over heels" },
+                    { id: 50, idiom: "Through thick and thin", emoji: "🛡️", meaning: "Supporting someone unconditionally, especially during difficult times.", example: "Thanks for always sticking by me __; you're a great friend.", correctWord: "through thick and thin" },
+                    { id: 51, idiom: "Take it easy", emoji: "🛀", meaning: "Relax; calm down.", example: "I'm going to __ this weekend after the exams.", correctWord: "take it easy" },
+                    { id: 52, idiom: "Get over it", emoji: "🤸", meaning: "Recover from something upsetting.", example: "He was sad about the loss, but he needs to __ now.", correctWord: "get over it" },
+                    { id: 53, idiom: "Ring a bell", emoji: "🔔", meaning: "Sound familiar.", example: "That name doesn't __; I've never heard of him.", correctWord: "ring a bell" },
+                    { id: 54, idiom: "Sleep on it", emoji: "😴", meaning: "Delay making a decision until the next day.", example: "It's a big choice, so why don't you __?", correctWord: "sleep on it" },
+                    { id: 55, idiom: "On the dot", emoji: "🕛", meaning: "Exactly on time.", example: "Make sure you arrive at 12:00 __.", correctWord: "on the dot" },
+                    { id: 56, idiom: "Easy come, easy go", emoji: "🌬️", meaning: "Something acquired without effort is also easily lost.", example: "I lost the money I won, but hey, __.", correctWord: "easy come, easy go" },
+                    { id: 57, idiom: "Get cold feet", emoji: "🧊", meaning: "Become nervous or hesitant about something.", example: "He was planning to perform, but he __ at the last minute.", correctWord: "got cold feet" },
+                    { id: 58, idiom: "Make ends meet", emoji: "💵", meaning: "Earn just enough money to live on.", example: "It's hard to __ with prices rising so fast.", correctWord: "make ends meet" },
+                    { id: 59, idiom: "Once bitten, twice shy", emoji: "🐍", meaning: "After a bad experience, one is careful to avoid similar situations.", example: "I won't trust that website again; __.", correctWord: "once bitten, twice shy" },
+                    { id: 60, idiom: "Keep your head above water", emoji: "🏊", meaning: "Managing to cope with a difficult situation, especially financial.", example: "I'm working two jobs just to __.", correctWord: "keep my head above water" },
+                    { id: 61, idiom: "A storm in a teacup", emoji: "☕", meaning: "A lot of fuss about something unimportant.", example: "The argument over the seating plan was just __.", correctWord: "a storm in a teacup" },
+                    { id: 62, idiom: "In a nutshell", emoji: "🌰", meaning: "Summarized briefly.", example: "To put the complicated theory __, it was a disaster.", correctWord: "in a nutshell" },
+                    { id: 63, idiom: "The last straw", emoji: "🌾", meaning: "The final irritation that causes someone to lose patience.", example: "When she was late again, that was __.", correctWord: "the last straw" },
+                    { id: 64, idiom: "Pass with flying colours", emoji: "🌈", meaning: "Pass an exam or test easily and with high marks.", example: "I studied hard and managed to __.", correctWord: "pass with flying colours" },
+                    { id: 65, idiom: "Get the hang of", emoji: "👌", meaning: "Learn how to do something, especially something new.", example: "It took me a week, but now I'm starting to __ playing the guitar.", correctWord: "get the hang of" },
+                    { id: 66, idiom: "The bottom line", emoji: "📝", meaning: "The most important factor or result.", example: "__ is that we need to finish this report by Friday.", correctWord: "The bottom line" },
+                    { id: 67, idiom: "Turn a blind eye", emoji: "🙈", meaning: "To pretend not to notice something bad or illegal.", example: "The teacher chose to __ to the small whispering.", correctWord: "turn a blind eye" },
+                    { id: 68, idiom: "Get the ball rolling", emoji: "⚽", meaning: "To start an activity or process.", example: "Let's __ and start planning our next holiday.", correctWord: "get the ball rolling" },
+                    { id: 69, idiom: "By the skin of one's teeth", emoji: "🦷", meaning: "Just barely succeeding in doing something.", example: "I passed the driving test only __.", correctWord: "by the skin of my teeth" },
+                    { id: 70, idiom: "Give someone the cold shoulder", emoji: "🥶", meaning: "To intentionally ignore someone.", example: "I tried to talk to her, but she just __.", correctWord: "gave me the cold shoulder" },
+                    { id: 71, idiom: "No pain, no gain", emoji: "💪", meaning: "Suffering is necessary to achieve success.", example: "You must practice every day; __!", correctWord: "no pain, no gain" },
+                    { id: 72, idiom: "Jump the gun", emoji: "🏃", meaning: "To start doing something too soon or prematurely.", example: "We should wait for the official announcement and not __.", correctWord: "jump the gun" },
+                    { id: 73, idiom: "Keep a straight face", emoji: "😐", meaning: "To manage to look serious and avoid laughing.", example: "It was so funny, I couldn't __ during the presentation.", correctWord: "keep a straight face" },
+                    { id: 74, idiom: "Let sleeping dogs lie", emoji: "🐕", meaning: "To avoid bringing up a past problem or argument.", example: "Don't ask him about his old job; it's better to __.", correctWord: "let sleeping dogs lie" },
+                    { id: 75, idiom: "Take the plunge", emoji: "💧", meaning: "To finally commit to a risky or serious undertaking.", example: "After months of planning, I decided to __ and start my own club.", correctWord: "take the plunge" },
+                    { id: 76, idiom: "Hit the books", emoji: "📖", meaning: "To study hard, usually for a test or exam.", example: "I need to __ tonight if I want to pass the maths test.", correctWord: "hit the books" },
+                    { id: 77, idiom: "Run out of steam", emoji: "💨", meaning: "To lose momentum or energy.", example: "He started the marathon strong but quickly __ halfway through.", correctWord: "ran out of steam" },
+                    { id: 78, idiom: "Put your feet up", emoji: "🏖️", meaning: "To relax, take a break.", example: "I'm looking forward to getting home and __ for the evening.", correctWord: "putting my feet up" },
+                    { id: 79, idiom: "Get something out of your system", emoji: "🌬️", meaning: "To do something you've wanted to do so you can move on.", example: "You should take that holiday to __ before you start university.", correctWord: "get it out of your system" },
+                    { id: 80, idiom: "Two sides of the same coin", emoji: "🪙", meaning: "Two different aspects of the same situation.", example: "Their honesty and bluntness are just __.", correctWord: "two sides of the same coin" },
+                    { id: 81, idiom: "Break a leg", emoji: "🤞", meaning: "Good luck (used especially to wish success to a performer).", example: "Tell him to __ before he goes on stage!", correctWord: "break a leg" },
+                    { id: 82, idiom: "Against the clock", emoji: "⏱️", meaning: "Rushing to meet a tight deadline.", example: "We worked __ to get the newspaper printed before morning.", correctWord: "against the clock" },
+                    { id: 83, idiom: "Get down to brass tacks", emoji: "🛠️", meaning: "Start discussing the essential, fundamental details.", example: "Enough small talk, let's __ and discuss the budget.", correctWord: "get down to brass tacks" },
+                    { id: 84, idiom: "Add insult to injury", emoji: "🩹", meaning: "To make a bad situation worse.", example: "Not only did they lose the match, but to __, they had to pay a fine.", correctWord: "add insult to injury" },
+                    { id: 85, idiom: "Pull yourself together", emoji: "🧘", meaning: "Recover control of one's emotions.", example: "You need to __ and focus on the presentation.", correctWord: "pull yourself together" },
+                    { id: 86, idiom: "Take a deep breath", emoji: "😮‍💨", meaning: "Pause to calm down before continuing.", example: "Just __ and start your speech when you feel ready.", correctWord: "take a deep breath" },
+                    { id: 87, idiom: "Come hell or high water", emoji: "🌊", meaning: "No matter what difficulties arise.", example: "We will finish this project by the deadline, __.", correctWord: "come hell or high water" },
+                    { id: 88, idiom: "Give and take", emoji: "🤲", meaning: "Compromise between opposing positions.", example: "A good friendship requires a lot of __.", correctWord: "give and take" },
+                    { id: 89, idiom: "Keep your shirt on", emoji: "👚", meaning: "Remain calm; don't get angry.", example: "__, I'll be there in five minutes!", correctWord: "Keep your shirt on" },
+                    { id: 90, idiom: "Up in the air", emoji: "🪁", meaning: "Uncertain or undecided.", example: "Our travel plans for next summer are still __.", correctWord: "up in the air" },
+                    { id: 91, idiom: "Have bigger fish to fry", emoji: "🎣", meaning: "Have more important things to do.", example: "I can't help you with that small task; I have __ right now.", correctWord: "bigger fish to fry" },
+                    { id: 92, idiom: "Spill the beans", emoji: "🍲", meaning: "Reveal a secret.", example: "Come on, don't keep me waiting—__ about your new job!", correctWord: "spill the beans" },
+                    { id: 93, idiom: "Be on cloud nine", emoji: "☁️", meaning: "Be extremely happy.", example: "She has been __ since she got into her dream university.", correctWord: "on cloud nine" },
+                    { id: 94, idiom: "Walk on air", emoji: "🎈", meaning: "Be extremely happy or excited.", example: "He was practically __ after his successful performance.", correctWord: "walking on air" },
+                    { id: 95, idiom: "A red letter day", emoji: "📅", meaning: "A significant, memorable, or joyful day.", example: "My graduation day was truly __ for my whole family.", correctWord: "a red letter day" },
+                    { id: 96, idiom: "To each their own", emoji: "🤷", meaning: "Everyone has their own preferences.", example: "I wouldn't choose that colour, but __.", correctWord: "to each their own" },
+                    { id: 97, idiom: "Know by heart", emoji: "❤️", meaning: "To memorize something completely.", example: "You need to __ these rules for the exam.", correctWord: "know these rules by heart" },
+                    { id: 98, idiom: "The early bird catches the worm", emoji: "🐦", meaning: "Success comes to those who prepare well and start early.", example: "If you want to get the best seats, remember: __.", correctWord: "the early bird catches the worm" },
+                    { id: 99, idiom: "Better safe than sorry", emoji: "⛑️", meaning: "It is better to take precautions than to regret the consequences.", example: "Put on sunscreen, just to be on the safe side—__.", correctWord: "better safe than sorry" },
+                    { id: 100, idiom: "Time flies", emoji: "⏳", meaning: "Time passes quickly.", example: "I can't believe the holidays are over already; __!", correctWord: "time flies" },
+                ];
+
+                let quizQuestions = [];
+                const QUIZ_SIZE = 20;
+                let currentQuestionIndex = 0;
+                let score = 0;
+
                 function createFilename(idiom) {
                     return idiom.toLowerCase().replace(/\s+/g, '_') + '.mp3';
                 }
+                
+                // --- NEW AUDIO FEEDBACK FUNCTIONS ---
+                function playCorrectSound() {
+                    const audio = new Audio('correct.mp3');
+                    audio.play().catch(e => console.warn("Could not play correct.mp3:", e));
+                }
 
-                /**
-                 * Plays the actual audio file associated with the idiom, stopping any previous audio.
-                 * @param {string} filename - The name of the audio file.
-                 * @param {string} idiom - The idiom being played.
-                 */
+                function playWrongSound() {
+                    const audio = new Audio('wrong.mp3');
+                    audio.play().catch(e => console.warn("Could not play wrong.mp3:", e));
+                }
+
                 function playAudio(filename, idiom) {
                     console.log(`Attempting to play audio for: "${idiom}". File: ${filename}`);
                     
-                    // 1. Stop and reset the previous audio track, if one exists
                     if (currentAudio && !currentAudio.paused) {
                         currentAudio.pause();
-                        currentAudio.currentTime = 0; // Reset playback position
+                        currentAudio.currentTime = 0;
                     }
                     
-                    // 2. Create the new audio object
                     const newAudio = new Audio(filename);
-                    
-                    // 3. Store the new audio object globally
                     currentAudio = newAudio;
 
-                    // 4. Start playback
                     newAudio.play().catch(e => {
                         console.error(`Error playing audio for ${idiom} (file: ${filename}). Ensure the file exists and is correctly named.`, e);
                         currentAudio = null; 
                     });
                 }
+                // --- END AUDIO FUNCTIONS ---
+
+                function shuffleArray(array) {
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                    return array;
+                }
+
+                function generateQuizQuestion(idiomData, allData) {
+                    const allOthers = allData.filter(d => d.id !== idiomData.id);
+                    const shuffledOthers = shuffleArray([...allOthers]);
+                    const distractors = shuffledOthers.slice(0, 2);
+
+                    let question = {};
+                    question.correctId = idiomData.id;
+                    
+                    const questionType = Math.random() < 0.5 ? 'meaning' : 'sentence';
+
+                    if (questionType === 'meaning') {
+                        question.type = 'Meaning';
+                        question.text = `What is the meaning of the idiom: "<span class="idiom-title">${idiomData.idiom}</span>"?`;
+                        question.correctAnswer = idiomData.meaning;
+                        question.choices = shuffleArray([
+                            { text: idiomData.meaning, correct: true },
+                            { text: distractors[0].meaning, correct: false },
+                            { text: distractors[1].meaning, correct: false }
+                        ]);
+                    } else { // Sentence completion (choose the correct idiom)
+                        question.type = 'Completion';
+                        
+                        // Prepare sentence for display with placeholder
+                        const placeholderExample = idiomData.example.replace(new RegExp(`\\b${idiomData.correctWord.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")}\\b`, 'i'), '____');
+                        
+                        question.text = `Complete the sentence with the correct idiom: "${placeholderExample}"`;
+                        question.correctAnswer = idiomData.idiom;
+                        
+                        question.choices = shuffleArray([
+                            { text: idiomData.idiom, correct: true },
+                            { text: distractors[0].idiom, correct: false },
+                            { text: distractors[1].idiom, correct: false }
+                        ]);
+                    }
+                    return question;
+                }
+
+                // --- FUNCTION TO RENDER LIST ON PAGE LOAD ---
+                function renderIdiomList() {
+                    const idiomListContainer = document.getElementById('idiom-list-content');
+                    if (!idiomListContainer) return; // Safety check
+                    
+                    const listHTML = ALL_IDIOMS_DATA.map(d => {
+                        // FIX: Replace the placeholder '__' with the correctly formatted idiom
+                        const highlightedExample = d.example.replace('__', `<strong class="idiom-title">${d.correctWord}</strong>`);
+                        
+                        return `
+                            <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
+                                <div class="flex items-center mb-1">
+                                    <span class="text-xl font-bold text-gray-700 mr-2">${d.id}.</span>
+                                    <strong class="text-xl idiom-title">${d.idiom}</strong>
+                                    <span class="text-2xl ml-2">${d.emoji}</span>
+                                    <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('${d.idiom}'), '${d.idiom}')" aria-label="Play audio for ${d.idiom}">
+                                        &#128266;
+                                    </button>
+                                </div>
+                                <p class="idiom-meaning mb-2">${d.meaning}</p>
+                                <p class="handwriting">${highlightedExample}</p>
+                            </div>
+                        `;
+                    }).join('');
+
+                    idiomListContainer.innerHTML = listHTML;
+                }
+                // --- END LIST RENDER FUNCTION ---
+
+
+                function startQuiz() {
+                    // 1. Hide list and show quiz area
+                    document.getElementById('idiom-list').classList.add('hidden');
+                    document.getElementById('start-quiz-btn-container').classList.add('hidden');
+                    document.getElementById('quiz-container').classList.remove('hidden');
+                    document.getElementById('quiz-results').classList.add('hidden');
+                    document.getElementById('quiz-area').classList.remove('hidden');
+
+                    // 2. Reset state
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    quizQuestions = [];
+
+                    // 3. Select 20 random idioms
+                    const randomIdioms = shuffleArray([...ALL_IDIOMS_DATA]).slice(0, QUIZ_SIZE);
+
+                    // 4. Generate questions
+                    randomIdioms.forEach(idiom => {
+                        quizQuestions.push(generateQuizQuestion(idiom, ALL_IDIOMS_DATA));
+                    });
+                    
+                    renderQuestion();
+                }
+
+                function renderQuestion() {
+                    if (currentQuestionIndex >= QUIZ_SIZE) {
+                        showResults();
+                        return;
+                    }
+
+                    const q = quizQuestions[currentQuestionIndex];
+                    const quizArea = document.getElementById('quiz-area');
+                    quizArea.innerHTML = `
+                        <div class="p-6 bg-white rounded-lg shadow-xl border border-blue-300">
+                            <p class="text-lg font-semibold text-gray-700 mb-2">
+                                Question ${currentQuestionIndex + 1} of ${QUIZ_SIZE}
+                            </p>
+                            <div class="text-xl font-bold mb-6 text-blue-800">
+                                ${q.text}
+                            </div>
+                            <form id="quiz-form" onsubmit="event.preventDefault(); checkAnswer();">
+                                <div class="space-y-4">
+                                    ${q.choices.map((choice, index) => `
+                                        <label id="choice-${index}" data-correct="${choice.correct}" class="quiz-option block cursor-pointer p-4 bg-gray-50 hover:bg-blue-100 rounded-lg border border-gray-300 transition duration-150">
+                                            <input type="radio" name="answer" value="${choice.text}" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                            <span class="font-medium text-gray-800">${choice.text}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                                <button type="submit" id="submit-btn" class="w-full mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-200">
+                                    Submit Answer
+                                </button>
+                                <button type="button" onclick="showIdiomList()" class="w-full mt-3 px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition duration-200">
+                                    Leave the Test
+                                </button>
+                            </form>
+                        </div>
+                    `;
+                }
+
+                function displayFeedback(isCorrect, selectedElement, correctElement) {
+                    const submitBtn = document.getElementById('submit-btn');
+                    const form = document.getElementById('quiz-form');
+                    
+                    // Disable form elements
+                    submitBtn.disabled = true;
+                    form.querySelectorAll('input[type="radio"]').forEach(radio => radio.disabled = true);
+                    
+                    // Highlight selected/correct answers
+                    if (isCorrect) {
+                        selectedElement.classList.add('correct-answer');
+                        playCorrectSound();
+                    } else {
+                        selectedElement.classList.add('incorrect-answer');
+                        // Show the correct answer
+                        correctElement.classList.add('correct-answer');
+                        playWrongSound();
+                    }
+
+                    // Move to the next question after a delay
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        renderQuestion();
+                    }, FEEDBACK_DELAY_MS);
+                }
+
+                function checkAnswer() {
+                    const form = document.getElementById('quiz-form');
+                    const selectedInput = form.querySelector('input[name="answer"]:checked');
+                    
+                    if (!selectedInput) {
+                        alert("Please select an answer before submitting.");
+                        return;
+                    }
+                    
+                    const selectedElement = selectedInput.closest('.quiz-option');
+                    const userAnswer = selectedInput.value;
+                    
+                    // Find the correct choice text
+                    const q = quizQuestions[currentQuestionIndex];
+                    const correctAnswerText = q.choices.find(c => c.correct).text;
+                    
+                    // Find the HTML element corresponding to the correct answer
+                    let correctElement = null;
+                    form.querySelectorAll('.quiz-option').forEach(element => {
+                        if (element.querySelector('span').textContent === correctAnswerText) {
+                            correctElement = element;
+                        }
+                    });
+
+                    const isCorrect = (userAnswer === correctAnswerText);
+
+                    // Display visual feedback and pause before advancing
+                    displayFeedback(isCorrect, selectedElement, correctElement);
+                }
+
+                function showResults() {
+                    document.getElementById('quiz-area').classList.add('hidden');
+                    const resultsDiv = document.getElementById('quiz-results');
+                    resultsDiv.classList.remove('hidden');
+
+                    resultsDiv.innerHTML = `
+                        <div class="p-8 bg-green-50 rounded-xl shadow-2xl text-center">
+                            <h2 class="text-3xl main-title text-green-700 mb-4">Quiz Complete!</h2>
+                            <p class="text-4xl font-extrabold text-green-800 mb-6">
+                                Your Score: ${score}/${QUIZ_SIZE}
+                            </p>
+                            <p class="text-lg text-gray-700 mb-8">
+                                That's a strong effort! Review the idioms you missed to strengthen your IGCSE vocabulary.
+                            </p>
+                            <button onclick="startQuiz()" class="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition duration-200 mr-4">
+                                Try Again
+                            </button>
+                            <button onclick="showIdiomList()" class="px-6 py-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition duration-200">
+                                Back to Idioms List
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                function showIdiomList() {
+                    document.getElementById('quiz-container').classList.add('hidden');
+                    document.getElementById('idiom-list').classList.remove('hidden');
+                    document.getElementById('start-quiz-btn-container').classList.remove('hidden');
+                }
             </script>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-
-                <!-- 1 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">1.</span>
-                        <strong class="text-xl idiom-title">Over the moon</strong>
-                        <span class="text-2xl ml-2">😊</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Over the moon'), 'Over the moon')" aria-label="Play audio for Over the moon">
-                            &#128266;
-                        </button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Extremely happy and delighted.</p>
-                    <p class="handwriting">I was <strong class="idiom-title">over the moon</strong> when I heard I got the concert tickets!</p>
-                </div>
-
-                <!-- 2 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">2.</span>
-                        <strong class="text-xl idiom-title">A piece of cake</strong>
-                        <span class="text-2xl ml-2">🍰</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A piece of cake'), 'A piece of cake')" aria-label="Play audio for A piece of cake">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Something very easy to do.</p>
-                    <p class="handwriting">Don't worry about the history test, it'll be <strong class="idiom-title">a piece of cake</strong> for you.</p>
-                </div>
-
-                <!-- 3 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">3.</span>
-                        <strong class="text-xl idiom-title">Take a rain check</strong>
-                        <span class="text-2xl ml-2">☔</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Take a rain check'), 'Take a rain check')" aria-label="Play audio for Take a rain check">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To politely decline an invitation, but offer to do it later.</p>
-                    <p class="handwriting">I can't make it to the party tonight, but can I <strong class="idiom-title">take a rain check</strong> for next time?</p>
-                </div>
-
-                <!-- 4 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">4.</span>
-                        <strong class="text-xl idiom-title">Let the cat out of the bag</strong>
-                        <span class="text-2xl ml-2">🐈</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Let the cat out of the bag'), 'Let the cat out of the bag')" aria-label="Play audio for Let the cat out of the bag">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To accidentally reveal a secret.</p>
-                    <p class="handwriting">Oops! I think I <strong class="idiom-title">let the cat out of the bag</strong> about your surprise party.</p>
-                </div>
-
-                <!-- 5 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">5.</span>
-                        <strong class="text-xl idiom-title">Speak of the devil</strong>
-                        <span class="text-2xl ml-2">🗣️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Speak of the devil'), 'Speak of the devil')" aria-label="Play audio for Speak of the devil">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Said when the person you were just talking about unexpectedly appears.</p>
-                    <p class="handwriting"><strong class="idiom-title">Speak of the devil</strong>, Jane just walked into the room!</p>
-                </div>
-
-                <!-- 6 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">6.</span>
-                        <strong class="text-xl idiom-title">Every cloud has a silver lining</strong>
-                        <span class="text-2xl ml-2">☁️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Every cloud has a silver lining'), 'Every cloud has a silver lining')" aria-label="Play audio for Every cloud has a silver lining">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Be optimistic; difficult times will lead to better days.</p>
-                    <p class="handwriting">I know failing the exam was tough, but remember, <strong class="idiom-title">every cloud has a silver lining</strong>.</p>
-                </div>
-
-                <!-- 7 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">7.</span>
-                        <strong class="text-xl idiom-title">Under the weather</strong>
-                        <span class="text-2xl ml-2">🤕</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Under the weather'), 'Under the weather')" aria-label="Play audio for Under the weather">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Slightly ill or unwell.</p>
-                    <p class="handwriting">I'm feeling a bit <strong class="idiom-title">under the weather</strong> today, so I'll stay home from school.</p>
-                </div>
-
-                <!-- 8 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">8.</span>
-                        <strong class="text-xl idiom-title">Cut a long story short</strong>
-                        <span class="text-2xl ml-2">✂️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Cut a long story short'), 'Cut a long story short')" aria-label="Play audio for Cut a long story short">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To tell the main points and omit unnecessary details.</p>
-                    <p class="handwriting">To <strong class="idiom-title">cut a long story short</strong>, we missed the last train and had to walk home.</p>
-                </div>
-
-                <!-- 9 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">9.</span>
-                        <strong class="text-xl idiom-title">See eye to eye</strong>
-                        <span class="text-2xl ml-2">👀</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('See eye to eye'), 'See eye to eye')" aria-label="Play audio for See eye to eye">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To agree completely with someone.</p>
-                    <p class="handwriting">Luckily, my study partner and I <strong class="idiom-title">see eye to eye</strong> on how to plan our project.</p>
-                </div>
-
-                <!-- 10 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">10.</span>
-                        <strong class="text-xl idiom-title">Back to the drawing board</strong>
-                        <span class="text-2xl ml-2">✏️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Back to the drawing board'), 'Back to the drawing board')" aria-label="Play audio for Back to the drawing board">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To start over after a plan or idea has failed.</p>
-                    <p class="handwriting">The experiment failed, so it's <strong class="idiom-title">back to the drawing board</strong> for our science group.</p>
-                </div>
-
-                <!-- 11 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">11.</span>
-                        <strong class="text-xl idiom-title">The ball is in your court</strong>
-                        <span class="text-2xl ml-2">🏀</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The ball is in your court'), 'The ball is in your court')" aria-label="Play audio for The ball is in your court">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">It is up to you to make the next decision or step.</p>
-                    <p class="handwriting">I've given you my advice; now <strong class="idiom-title">the ball is in your court</strong> to decide.</p>
-                </div>
-
-                <!-- 12 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">12.</span>
-                        <strong class="text-xl idiom-title">Cost an arm and a leg</strong>
-                        <span class="text-2xl ml-2">💰</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Cost an arm and a leg'), 'Cost an arm and a leg')" aria-label="Play audio for Cost an arm and a leg">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To be very expensive.</p>
-                    <p class="handwriting">Those new headphones must <strong class="idiom-title">cost an arm and a leg</strong>!</p>
-                </div>
-
-                <!-- 13 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">13.</span>
-                        <strong class="text-xl idiom-title">Go the extra mile</strong>
-                        <span class="text-2xl ml-2">🥇</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Go the extra mile'), 'Go the extra mile')" aria-label="Play audio for Go the extra mile">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To make a special effort to achieve something.</p>
-                    <p class="handwriting">She always <strong class="idiom-title">goes the extra mile</strong> to help her younger sister with homework.</p>
-                </div>
-
-                <!-- 14 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">14.</span>
-                        <strong class="text-xl idiom-title">Hit the nail on the head</strong>
-                        <span class="text-2xl ml-2">📌</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Hit the nail on the head'), 'Hit the nail on the head')" aria-label="Play audio for Hit the nail on the head">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To describe exactly what is causing a situation or problem.</p>
-                    <p class="handwriting">That's right, you <strong class="idiom-title">hit the nail on the head</strong>! I completely forgot about the deadline.</p>
-                </div>
-
-                <!-- 15 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">15.</span>
-                        <strong class="text-xl idiom-title">Bite the bullet</strong>
-                        <span class="text-2xl ml-2">😬</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Bite the bullet'), 'Bite the bullet')" aria-label="Play audio for Bite the bullet">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To face a difficult or unpleasant situation with courage.</p>
-                    <p class="handwriting">I don't want to tell my parents, but I have to <strong class="idiom-title">bite the bullet</strong> and admit I lost the book.</p>
-                </div>
-
-                <!-- 16 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">16.</span>
-                        <strong class="text-xl idiom-title">Burn the midnight oil</strong>
-                        <span class="text-2xl ml-2">📚</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Burn the midnight oil'), 'Burn the midnight oil')" aria-label="Play audio for Burn the midnight oil">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To stay up late working or studying.</p>
-                    <p class="handwriting">We had to <strong class="idiom-title">burn the midnight oil</strong> last night to finish the history presentation.</p>
-                </div>
-
-                <!-- 17 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">17.</span>
-                        <strong class="text-xl idiom-title">Call it a day</strong>
-                        <span class="text-2xl ml-2">⏸️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Call it a day'), 'Call it a day')" aria-label="Play audio for Call it a day">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To stop working on something; to finish for the day.</p>
-                    <p class="handwriting">It's getting late. Let's <strong class="idiom-title">call it a day</strong> and finish this tomorrow morning.</p>
-                </div>
-
-                <!-- 18 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">18.</span>
-                        <strong class="text-xl idiom-title">Hang in there</strong>
-                        <span class="text-2xl ml-2">💪</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Hang in there'), 'Hang in there')" aria-label="Play audio for Hang in there">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Don't give up; persist (often used as encouragement).</p>
-                    <p class="handwriting">The training is tough, but <strong class="idiom-title">hang in there</strong>! You'll be great.</p>
-                </div>
-
-                <!-- 19 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">19.</span>
-                        <strong class="text-xl idiom-title">A blessing in disguise</strong>
-                        <span class="text-2xl ml-2">🎁</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A blessing in disguise'), 'A blessing in disguise')" aria-label="Play audio for A blessing in disguise">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Something that seems bad or unlucky at first but results in something good later on.</p>
-                    <p class="handwriting">Missing the early bus was <strong class="idiom-title">a blessing in disguise</strong> because I got a better seat on the next one.</p>
-                </div>
-
-                <!-- 20 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">20.</span>
-                        <strong class="text-xl idiom-title">Get something off one's chest</strong>
-                        <span class="text-2xl ml-2">🗣️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get something off one\'s chest'), 'Get something off one\'s chest')" aria-label="Play audio for Get something off one's chest">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To confess or talk about something that has been worrying you.</p>
-                    <p class="handwriting">I need to <strong class="idiom-title">get something off my chest</strong>; can we meet for coffee?</p>
-                </div>
-
-                <!-- 21 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">21.</span>
-                        <strong class="text-xl idiom-title">Keep an eye on</strong>
-                        <span class="text-2xl ml-2">👂</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Keep an eye on'), 'Keep an eye on')" aria-label="Play audio for Keep an eye on">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To watch or look after carefully.</p>
-                    <p class="handwriting">Can you <strong class="idiom-title">keep an eye on</strong> my bag while I quickly get a drink?</p>
-                </div>
-
-                <!-- 22 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">22.</span>
-                        <strong class="text-xl idiom-title">Miss the boat</strong>
-                        <span class="text-2xl ml-2">🚢</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Miss the boat'), 'Miss the boat')" aria-label="Play audio for Miss the boat">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To miss an opportunity.</p>
-                    <p class="handwriting">The deadline for applications passed yesterday; I totally <strong class="idiom-title">missed the boat</strong>.</p>
-                </div>
-
-                <!-- 23 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">23.</span>
-                        <strong class="text-xl idiom-title">Pull someone's leg</strong>
-                        <span class="text-2xl ml-2">😂</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Pull someone\'s leg'), 'Pull someone\'s leg')" aria-label="Play audio for Pull someone's leg">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To joke or tease someone.</p>
-                    <p class="handwriting">Wait, were you serious, or are you just <strong class="idiom-title">pulling my leg</strong> about the field trip?</p>
-                </div>
-
-                <!-- 24 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">24.</span>
-                        <strong class="text-xl idiom-title">Get your act together</strong>
-                        <span class="text-2xl ml-2">🛑</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get your act together'), 'Get your act together')" aria-label="Play audio for Get your act together">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To organize oneself and behave more effectively.</p>
-                    <p class="handwriting">You need to <strong class="idiom-title">get your act together</strong> if you want to pass the final exams.</p>
-                </div>
-
-                <!-- 25 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">25.</span>
-                        <strong class="text-xl idiom-title">Give it a shot</strong>
-                        <span class="text-2xl ml-2">👍</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Give it a shot'), 'Give it a shot')" aria-label="Play audio for Give it a shot">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To try something.</p>
-                    <p class="handwriting">I'm not sure if I can do it, but I'll <strong class="idiom-title">give it a shot</strong> anyway!</p>
-                </div>
-
-                <!-- 26 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">26.</span>
-                        <strong class="text-xl idiom-title">Think outside the box</strong>
-                        <span class="text-2xl ml-2">💡</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Think outside the box'), 'Think outside the box')" aria-label="Play audio for Think outside the box">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To think creatively and unconventionally.</p>
-                    <p class="handwriting">For this project, we need to <strong class="idiom-title">think outside the box</strong> to come up with a truly unique idea.</p>
-                </div>
-
-                <!-- 27 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">27.</span>
-                        <strong class="text-xl idiom-title">Once in a blue moon</strong>
-                        <span class="text-2xl ml-2">🌙</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Once in a blue moon'), 'Once in a blue moon')" aria-label="Play audio for Once in a blue moon">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Very rarely.</p>
-                    <p class="handwriting">I only watch a movie with my parents <strong class="idiom-title">once in a blue moon</strong>, so it's a special treat.</p>
-                </div>
-
-                <!-- 28 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">28.</span>
-                        <strong class="text-xl idiom-title">Hit the sack</strong>
-                        <span class="text-2xl ml-2">😴</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Hit the sack'), 'Hit the sack')" aria-label="Play audio for Hit the sack">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To go to bed.</p>
-                    <p class="handwriting">I'm exhausted after that long trip, I need to <strong class="idiom-title">hit the sack</strong>.</p>
-                </div>
-
-                <!-- 29 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">29.</span>
-                        <strong class="text-xl idiom-title">The whole nine yards</strong>
-                        <span class="text-2xl ml-2">🎯</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The whole nine yards'), 'The whole nine yards')" aria-label="Play audio for The whole nine yards">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Everything; all of it.</p>
-                    <p class="handwriting">For his birthday party, we got him a cake, presents, and balloons – <strong class="idiom-title">the whole nine yards</strong>.</p>
-                </div>
-
-                <!-- 30 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">30.</span>
-                        <strong class="text-xl idiom-title">On the same page</strong>
-                        <span class="text-2xl ml-2">🤝</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('On the same page'), 'On the same page')" aria-label="Play audio for On the same page">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To be in agreement about something.</p>
-                    <p class="handwriting">Let's quickly review the plan to make sure we're all <strong class="idiom-title">on the same page</strong>.</p>
-                </div>
-
-                <!-- 31 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">31.</span>
-                        <strong class="text-xl idiom-title">Couch potato</strong>
-                        <span class="text-2xl ml-2">🛋️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Couch potato'), 'Couch potato')" aria-label="Play audio for Couch potato">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">A very lazy person who spends a lot of time watching TV.</p>
-                    <p class="handwriting">Don't be such a <strong class="idiom-title">couch potato</strong> this weekend; let's go outside!</p>
-                </div>
-
-                <!-- 32 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">32.</span>
-                        <strong class="text-xl idiom-title">Wrap my head around</strong>
-                        <span class="text-2xl ml-2">🧠</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Wrap my head around'), 'Wrap my head around')" aria-label="Play audio for Wrap my head around">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To understand something complicated or strange.</p>
-                    <p class="handwriting">I'm finding it hard to <strong class="idiom-title">wrap my head around</strong> the physics concepts we learned today.</p>
-                </div>
-
-                <!-- 33 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">33.</span>
-                        <strong class="text-xl idiom-title">Read between the lines</strong>
-                        <span class="text-2xl ml-2">📘</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Read between the lines'), 'Read between the lines')" aria-label="Play audio for Read between the lines">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To understand the hidden or implied meaning.</p>
-                    <p class="handwriting">She said she was 'fine', but if you <strong class="idiom-title">read between the lines</strong>, you can tell she's upset.</p>
-                </div>
-
-                <!-- 34 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">34.</span>
-                        <strong class="text-xl idiom-title">The icing on the cake</strong>
-                        <span class="text-2xl ml-2">👑</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The icing on the cake'), 'The icing on the cake')" aria-label="Play audio for The icing on the cake">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">An extra benefit or positive element that makes a good situation even better.</p>
-                    <p class="handwriting">Getting the job offer was great, but the big salary increase was <strong class="idiom-title">the icing on the cake</strong>.</p>
-                </div>
-
-                <!-- 35 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">35.</span>
-                        <strong class="text-xl idiom-title">When pigs fly</strong>
-                        <span class="text-2xl ml-2">🐷</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('When pigs fly'), 'When pigs fly')" aria-label="Play audio for When pigs fly">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Something that will never happen.</p>
-                    <p class="handwriting">He'll apologize for what he did <strong class="idiom-title">when pigs fly</strong>!</p>
-                </div>
-
-                <!-- 36 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">36.</span>
-                        <strong class="text-xl idiom-title">Skating on thin ice</strong>
-                        <span class="text-2xl ml-2">🥶</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Skating on thin ice'), 'Skating on thin ice')" aria-label="Play audio for Skating on thin ice">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To be in a risky situation.</p>
-                    <p class="handwriting">If you keep skipping classes, you'll be <strong class="idiom-title">skating on thin ice</strong> with the principal.</p>
-                </div>
-
-                <!-- 37 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">37.</span>
-                        <strong class="text-xl idiom-title">A drop in the ocean</strong>
-                        <span class="text-2xl ml-2">💧</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A drop in the ocean'), 'A drop in the ocean')" aria-label="Play audio for A drop in the ocean">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">A tiny amount compared to what is needed.</p>
-                    <p class="handwriting">The money we raised is just <strong class="idiom-title">a drop in the ocean</strong> compared to the total needed for the project.</p>
-                </div>
-
-                <!-- 38 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">38.</span>
-                        <strong class="text-xl idiom-title">The apple of my eye</strong>
-                        <span class="text-2xl ml-2">🍎</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The apple of my eye'), 'The apple of my eye')" aria-label="Play audio for The apple of my eye">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">A person who is cherished above all others.</p>
-                    <p class="handwriting">My younger cousin is absolutely <strong class="idiom-title">the apple of my eye</strong>.</p>
-                </div>
-
-                <!-- 39 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">39.</span>
-                        <strong class="text-xl idiom-title">Mum's the word</strong>
-                        <span class="text-2xl ml-2">🤫</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Mum\'s the word'), 'Mum\'s the word')" aria-label="Play audio for Mum's the word">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Keep the matter a secret; don't tell anyone.</p>
-                    <p class="handwriting">The party is a secret, so remember, <strong class="idiom-title">mum's the word</strong> until Friday!</p>
-                </div>
-
-                <!-- 40 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">40.</span>
-                        <strong class="text-xl idiom-title">Catch up</strong>
-                        <span class="text-2xl ml-2">🎉</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Catch up'), 'Catch up')" aria-label="Play audio for Catch up">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To meet someone after a period of time to share news.</p>
-                    <p class="handwriting">I haven't seen you in ages! We must <strong class="idiom-title">catch up</strong> soon.</p>
-                </div>
-
-                <!-- 41 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">41.</span>
-                        <strong class="text-xl idiom-title">Lend a hand</strong>
-                        <span class="text-2xl ml-2">🤝</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Lend a hand'), 'Lend a hand')" aria-label="Play audio for Lend a hand">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Help with something or assist someone.</p>
-                    <p class="handwriting">Can you <strong class="idiom-title">lend a hand</strong> with setting up the decorations for the party?</p>
-                </div>
-
-                <!-- 42 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">42.</span>
-                        <strong class="text-xl idiom-title">Hold your horses</strong>
-                        <span class="text-2xl ml-2">🐴</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Hold your horses'), 'Hold your horses')" aria-label="Play audio for Hold your horses">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Wait a moment or slow down.</p>
-                    <p class="handwriting">Just <strong class="idiom-title">hold your horses</strong> for a minute, I need to check the exact time of the meeting.</p>
-                </div>
-
-                <!-- 43 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">43.</span>
-                        <strong class="text-xl idiom-title">A dime a dozen</strong>
-                        <span class="text-2xl ml-2">🪙</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A dime a dozen'), 'A dime a dozen')" aria-label="Play audio for A dime a dozen">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Very common and easily found.</p>
-                    <p class="handwriting">Good study guides are <strong class="idiom-title">a dime a dozen</strong> online, so don't pay too much for one.</p>
-                </div>
-
-                <!-- 44 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">44.</span>
-                        <strong class="text-xl idiom-title">All ears</strong>
-                        <span class="text-2xl ml-2">👂</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('All ears'), 'All ears')" aria-label="Play audio for All ears">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Eager and ready to listen.</p>
-                    <p class="handwriting">Tell me about your trip—I'm <strong class="idiom-title">all ears</strong>!</p>
-                </div>
-
-                <!-- 45 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">45.</span>
-                        <strong class="text-xl idiom-title">Put all your eggs in one basket</strong>
-                        <span class="text-2xl ml-2">🥚</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Put all your eggs in one basket'), 'Put all your eggs in one basket')" aria-label="Play audio for Put all your eggs in one basket">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To risk everything on one venture.</p>
-                    <p class="handwriting">It's better to apply to a few universities and not <strong class="idiom-title">put all your eggs in one basket</strong>.</p>
-                </div>
-
-                <!-- 46 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">46.</span>
-                        <strong class="text-xl idiom-title">Jump on the bandwagon</strong>
-                        <span class="text-2xl ml-2">🚌</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Jump on the bandwagon'), 'Jump on the bandwagon')" aria-label="Play audio for Jump on the bandwagon">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To join an activity or trend that has become popular.</p>
-                    <p class="handwriting">Everyone started wearing those shoes, so I decided to <strong class="idiom-title">jump on the bandwagon</strong> too.</p>
-                </div>
-
-                <!-- 47 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">47.</span>
-                        <strong class="text-xl idiom-title">To make matters worse</strong>
-                        <span class="text-2xl ml-2">📉</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('To make matters worse'), 'To make matters worse')" aria-label="Play audio for To make matters worse">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To make a bad situation even more difficult or unpleasant.</p>
-                    <p class="handwriting">First, I missed the bus, and then, <strong class="idiom-title">to make matters worse</strong>, it started raining heavily.</p>
-                </div>
-
-                <!-- 48 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">48.</span>
-                        <strong class="text-xl idiom-title">Give the benefit of the doubt</strong>
-                        <span class="text-2xl ml-2">❓</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Give the benefit of the doubt'), 'Give the benefit of the doubt')" aria-label="Play audio for Give the benefit of the doubt">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To accept someone's statement or excuse as true, without proof.</p>
-                    <p class="handwriting">I'll <strong class="idiom-title">give her the benefit of the doubt</strong> and assume she just forgot to reply to the email.</p>
-                </div>
-
-                <!-- 49 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">49.</span>
-                        <strong class="text-xl idiom-title">Head over heels</strong>
-                        <span class="text-2xl ml-2">🤸</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Head over heels'), 'Head over heels')" aria-label="Play audio for Head over heels">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Madly in love or extremely enthusiastic about something.</p>
-                    <p class="handwriting">I am <strong class="idiom-title">head over heels</strong> about the new concert venue; it looks amazing!</p>
-                </div>
-
-                <!-- 50 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">50.</span>
-                        <strong class="text-xl idiom-title">Through thick and thin</strong>
-                        <span class="text-2xl ml-2">🛡️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Through thick and thin'), 'Through thick and thin')" aria-label="Play audio for Through thick and thin">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Supporting someone unconditionally, especially during difficult times.</p>
-                    <p class="handwriting">Thanks for always sticking by me <strong class="idiom-title">through thick and thin</strong>; you're a great friend.</p>
-                </div>
-                
-                <!-- 51 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">51.</span>
-                        <strong class="text-xl idiom-title">Take it easy</strong>
-                        <span class="text-2xl ml-2">🛀</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Take it easy'), 'Take it easy')" aria-label="Play audio for Take it easy">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Relax; calm down.</p>
-                    <p class="handwriting">I'm going to <strong class="idiom-title">take it easy</strong> this weekend after the exams.</p>
-                </div>
-
-                <!-- 52 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">52.</span>
-                        <strong class="text-xl idiom-title">Get over it</strong>
-                        <span class="text-2xl ml-2">🤸</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get over it'), 'Get over it')" aria-label="Play audio for Get over it">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Recover from something upsetting.</p>
-                    <p class="handwriting">He was sad about the loss, but he needs to <strong class="idiom-title">get over it</strong> now.</p>
-                </div>
-
-                <!-- 53 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">53.</span>
-                        <strong class="text-xl idiom-title">Ring a bell</strong>
-                        <span class="text-2xl ml-2">🔔</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Ring a bell'), 'Ring a bell')" aria-label="Play audio for Ring a bell">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Sound familiar.</p>
-                    <p class="handwriting">That name doesn't <strong class="idiom-title">ring a bell</strong>; I've never heard of him.</p>
-                </div>
-
-                <!-- 54 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">54.</span>
-                        <strong class="text-xl idiom-title">Sleep on it</strong>
-                        <span class="text-2xl ml-2">😴</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Sleep on it'), 'Sleep on it')" aria-label="Play audio for Sleep on it">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Delay making a decision until the next day.</p>
-                    <p class="handwriting">It's a big choice, so why don't you <strong class="idiom-title">sleep on it</strong>?</p>
-                </div>
-
-                <!-- 55 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">55.</span>
-                        <strong class="text-xl idiom-title">On the dot</strong>
-                        <span class="text-2xl ml-2">🕛</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('On the dot'), 'On the dot')" aria-label="Play audio for On the dot">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Exactly on time.</p>
-                    <p class="handwriting">Make sure you arrive at 12:00 <strong class="idiom-title">on the dot</strong>.</p>
-                </div>
-
-                <!-- 56 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">56.</span>
-                        <strong class="text-xl idiom-title">Easy come, easy go</strong>
-                        <span class="text-2xl ml-2">🌬️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Easy come, easy go'), 'Easy come, easy go')" aria-label="Play audio for Easy come, easy go">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Something acquired without effort is also easily lost.</p>
-                    <p class="handwriting">I lost the money I won, but hey, <strong class="idiom-title">easy come, easy go</strong>.</p>
-                </div>
-
-                <!-- 57 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">57.</span>
-                        <strong class="text-xl idiom-title">Get cold feet</strong>
-                        <span class="text-2xl ml-2">🧊</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get cold feet'), 'Get cold feet')" aria-label="Play audio for Get cold feet">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Become nervous or hesitant about something.</p>
-                    <p class="handwriting">He was planning to perform, but he <strong class="idiom-title">got cold feet</strong> at the last minute.</p>
-                </div>
-
-                <!-- 58 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">58.</span>
-                        <strong class="text-xl idiom-title">Make ends meet</strong>
-                        <span class="text-2xl ml-2">💵</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Make ends meet'), 'Make ends meet')" aria-label="Play audio for Make ends meet">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Earn just enough money to live on.</p>
-                    <p class="handwriting">It's hard to <strong class="idiom-title">make ends meet</strong> with prices rising so fast.</p>
-                </div>
-
-                <!-- 59 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">59.</span>
-                        <strong class="text-xl idiom-title">Once bitten, twice shy</strong>
-                        <span class="text-2xl ml-2">🐍</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Once bitten, twice shy'), 'Once bitten, twice shy')" aria-label="Play audio for Once bitten, twice shy">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">After a bad experience, one is careful to avoid similar situations.</p>
-                    <p class="handwriting">I won't trust that website again; <strong class="idiom-title">once bitten, twice shy</strong>.</p>
-                </div>
-
-                <!-- 60 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">60.</span>
-                        <strong class="text-xl idiom-title">Keep your head above water</strong>
-                        <span class="text-2xl ml-2">🏊</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Keep your head above water'), 'Keep your head above water')" aria-label="Play audio for Keep your head above water">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Managing to cope with a difficult situation, especially financial.</p>
-                    <p class="handwriting">I'm working two jobs just to <strong class="idiom-title">keep my head above water</strong>.</p>
-                </div>
-
-                <!-- 61 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">61.</span>
-                        <strong class="text-xl idiom-title">A storm in a teacup</strong>
-                        <span class="text-2xl ml-2">☕</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A storm in a teacup'), 'A storm in a teacup')" aria-label="Play audio for A storm in a teacup">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">A lot of fuss about something unimportant.</p>
-                    <p class="handwriting">The argument over the seating plan was just <strong class="idiom-title">a storm in a teacup</strong>.</p>
-                </div>
-
-                <!-- 62 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">62.</span>
-                        <strong class="text-xl idiom-title">In a nutshell</strong>
-                        <span class="text-2xl ml-2">🌰</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('In a nutshell'), 'In a nutshell')" aria-label="Play audio for In a nutshell">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Summarized briefly.</p>
-                    <p class="handwriting">To put the complicated theory <strong class="idiom-title">in a nutshell</strong>, it was a disaster.</p>
-                </div>
-
-                <!-- 63 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">63.</span>
-                        <strong class="text-xl idiom-title">The last straw</strong>
-                        <span class="text-2xl ml-2">🌾</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The last straw'), 'The last straw')" aria-label="Play audio for The last straw">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">The final irritation that causes someone to lose patience.</p>
-                    <p class="handwriting">When she was late again, that was <strong class="idiom-title">the last straw</strong>.</p>
-                </div>
-
-                <!-- 64 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">64.</span>
-                        <strong class="text-xl idiom-title">Pass with flying colours</strong>
-                        <span class="text-2xl ml-2">🌈</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Pass with flying colours'), 'Pass with flying colours')" aria-label="Play audio for Pass with flying colours">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Pass an exam or test easily and with high marks.</p>
-                    <p class="handwriting">I studied hard and managed to <strong class="idiom-title">pass with flying colours</strong>.</p>
-                </div>
-
-                <!-- 65 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">65.</span>
-                        <strong class="text-xl idiom-title">Get the hang of</strong>
-                        <span class="text-2xl ml-2">👌</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get the hang of'), 'Get the hang of')" aria-label="Play audio for Get the hang of">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Learn how to do something, especially something new.</p>
-                    <p class="handwriting">It took me a week, but now I'm starting to <strong class="idiom-title">get the hang of</strong> playing the guitar.</p>
-                </div>
-
-                <!-- 66 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">66.</span>
-                        <strong class="text-xl idiom-title">The bottom line</strong>
-                        <span class="text-2xl ml-2">📝</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The bottom line'), 'The bottom line')" aria-label="Play audio for The bottom line">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">The most important factor or result.</p>
-                    <p class="handwriting"><strong class="idiom-title">The bottom line</strong> is that we need to finish this report by Friday.</p>
-                </div>
-
-                <!-- 67 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">67.</span>
-                        <strong class="text-xl idiom-title">Turn a blind eye</strong>
-                        <span class="text-2xl ml-2">🙈</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Turn a blind eye'), 'Turn a blind eye')" aria-label="Play audio for Turn a blind eye">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To pretend not to notice something bad or illegal.</p>
-                    <p class="handwriting">The teacher chose to <strong class="idiom-title">turn a blind eye</strong> to the small whispering.</p>
-                </div>
-
-                <!-- 68 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">68.</span>
-                        <strong class="text-xl idiom-title">Get the ball rolling</strong>
-                        <span class="text-2xl ml-2">⚽</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get the ball rolling'), 'Get the ball rolling')" aria-label="Play audio for Get the ball rolling">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To start an activity or process.</p>
-                    <p class="handwriting">Let's <strong class="idiom-title">get the ball rolling</strong> and start planning our next holiday.</p>
-                </div>
-
-                <!-- 69 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">69.</span>
-                        <strong class="text-xl idiom-title">By the skin of one's teeth</strong>
-                        <span class="text-2xl ml-2">🦷</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('By the skin of one\'s teeth'), 'By the skin of one\'s teeth')" aria-label="Play audio for By the skin of one's teeth">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Just barely succeeding in doing something.</p>
-                    <p class="handwriting">I passed the driving test only <strong class="idiom-title">by the skin of my teeth</strong>.</p>
-                </div>
-
-                <!-- 70 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">70.</span>
-                        <strong class="text-xl idiom-title">Give someone the cold shoulder</strong>
-                        <span class="text-2xl ml-2">🥶</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Give someone the cold shoulder'), 'Give someone the cold shoulder')" aria-label="Play audio for Give someone the cold shoulder">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To intentionally ignore someone.</p>
-                    <p class="handwriting">I tried to talk to her, but she just <strong class="idiom-title">gave me the cold shoulder</strong>.</p>
-                </div>
-
-                <!-- 71 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">71.</span>
-                        <strong class="text-xl idiom-title">No pain, no gain</strong>
-                        <span class="text-2xl ml-2">💪</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('No pain, no gain'), 'No pain, no gain')" aria-label="Play audio for No pain, no gain">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Suffering is necessary to achieve success.</p>
-                    <p class="handwriting">You must practice every day; <strong class="idiom-title">no pain, no gain</strong>!</p>
-                </div>
-
-                <!-- 72 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">72.</span>
-                        <strong class="text-xl idiom-title">Jump the gun</strong>
-                        <span class="text-2xl ml-2">🏃</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Jump the gun'), 'Jump the gun')" aria-label="Play audio for Jump the gun">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To start doing something too soon or prematurely.</p>
-                    <p class="handwriting">We should wait for the official announcement and not <strong class="idiom-title">jump the gun</strong>.</p>
-                </div>
-
-                <!-- 73 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">73.</span>
-                        <strong class="text-xl idiom-title">Keep a straight face</strong>
-                        <span class="text-2xl ml-2">😐</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Keep a straight face'), 'Keep a straight face')" aria-label="Play audio for Keep a straight face">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To manage to look serious and avoid laughing.</p>
-                    <p class="handwriting">It was so funny, I couldn't <strong class="idiom-title">keep a straight face</strong> during the presentation.</p>
-                </div>
-
-                <!-- 74 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">74.</span>
-                        <strong class="text-xl idiom-title">Let sleeping dogs lie</strong>
-                        <span class="text-2xl ml-2">🐕</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Let sleeping dogs lie'), 'Let sleeping dogs lie')" aria-label="Play audio for Let sleeping dogs lie">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To avoid bringing up a past problem or argument.</p>
-                    <p class="handwriting">Don't ask him about his old job; it's better to <strong class="idiom-title">let sleeping dogs lie</strong>.</p>
-                </div>
-
-                <!-- 75 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">75.</span>
-                        <strong class="text-xl idiom-title">Take the plunge</strong>
-                        <span class="text-2xl ml-2">💧</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Take the plunge'), 'Take the plunge')" aria-label="Play audio for Take the plunge">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To finally commit to a risky or serious undertaking.</p>
-                    <p class="handwriting">After months of planning, I decided to <strong class="idiom-title">take the plunge</strong> and start my own club.</p>
-                </div>
-
-                <!-- 76 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">76.</span>
-                        <strong class="text-xl idiom-title">Hit the books</strong>
-                        <span class="text-2xl ml-2">📖</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Hit the books'), 'Hit the books')" aria-label="Play audio for Hit the books">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To study hard, usually for a test or exam.</p>
-                    <p class="handwriting">I need to <strong class="idiom-title">hit the books</strong> tonight if I want to pass the maths test.</p>
-                </div>
-
-                <!-- 77 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">77.</span>
-                        <strong class="text-xl idiom-title">Run out of steam</strong>
-                        <span class="text-2xl ml-2">💨</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Run out of steam'), 'Run out of steam')" aria-label="Play audio for Run out of steam">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To lose momentum or energy.</p>
-                    <p class="handwriting">He started the marathon strong but quickly <strong class="idiom-title">ran out of steam</strong> halfway through.</p>
-                </div>
-
-                <!-- 78 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">78.</span>
-                        <strong class="text-xl idiom-title">Put your feet up</strong>
-                        <span class="text-2xl ml-2">🏖️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Put your feet up'), 'Put your feet up')" aria-label="Play audio for Put your feet up">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To relax, take a break.</p>
-                    <p class="handwriting">I'm looking forward to getting home and <strong class="idiom-title">putting my feet up</strong> for the evening.</p>
-                </div>
-
-                <!-- 79 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">79.</span>
-                        <strong class="text-xl idiom-title">Get something out of your system</strong>
-                        <span class="text-2xl ml-2">🌬️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get something out of your system'), 'Get something out of your system')" aria-label="Play audio for Get something out of your system">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To do something you've wanted to do so you can move on.</p>
-                    <p class="handwriting">You should take that holiday to <strong class="idiom-title">get it out of your system</strong> before you start university.</p>
-                </div>
-
-                <!-- 80 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">80.</span>
-                        <strong class="text-xl idiom-title">Two sides of the same coin</strong>
-                        <span class="text-2xl ml-2">🪙</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Two sides of the same coin'), 'Two sides of the same coin')" aria-label="Play audio for Two sides of the same coin">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Two different aspects of the same situation.</p>
-                    <p class="handwriting">Their honesty and bluntness are just <strong class="idiom-title">two sides of the same coin</strong>.</p>
-                </div>
-
-                <!-- 81 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">81.</span>
-                        <strong class="text-xl idiom-title">Break a leg</strong>
-                        <span class="text-2xl ml-2">🤞</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Break a leg'), 'Break a leg')" aria-label="Play audio for Break a leg">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Good luck (used especially to wish success to a performer).</p>
-                    <p class="handwriting">Tell him to <strong class="idiom-title">break a leg</strong> before he goes on stage!</p>
-                </div>
-
-                <!-- 82 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">82.</span>
-                        <strong class="text-xl idiom-title">Against the clock</strong>
-                        <span class="text-2xl ml-2">⏱️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Against the clock'), 'Against the clock')" aria-label="Play audio for Against the clock">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Rushing to meet a tight deadline.</p>
-                    <p class="handwriting">We worked <strong class="idiom-title">against the clock</strong> to get the newspaper printed before morning.</p>
-                </div>
-
-                <!-- 83 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">83.</span>
-                        <strong class="text-xl idiom-title">Get down to brass tacks</strong>
-                        <span class="text-2xl ml-2">🛠️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Get down to brass tacks'), 'Get down to brass tacks')" aria-label="Play audio for Get down to brass tacks">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Start discussing the essential, fundamental details.</p>
-                    <p class="handwriting">Enough small talk, let's <strong class="idiom-title">get down to brass tacks</strong> and discuss the budget.</p>
-                </div>
-
-                <!-- 84 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">84.</span>
-                        <strong class="text-xl idiom-title">Add insult to injury</strong>
-                        <span class="text-2xl ml-2">🩹</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Add insult to injury'), 'Add insult to injury')" aria-label="Play audio for Add insult to injury">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To make a bad situation worse.</p>
-                    <p class="handwriting">Not only did they lose the match, but to <strong class="idiom-title">add insult to injury</strong>, they had to pay a fine.</p>
-                </div>
-
-                <!-- 85 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">85.</span>
-                        <strong class="text-xl idiom-title">Pull yourself together</strong>
-                        <span class="text-2xl ml-2">🧘</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Pull yourself together'), 'Pull yourself together')" aria-label="Play audio for Pull yourself together">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Recover control of one's emotions.</p>
-                    <p class="handwriting">You need to <strong class="idiom-title">pull yourself together</strong> and focus on the presentation.</p>
-                </div>
-
-                <!-- 86 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">86.</span>
-                        <strong class="text-xl idiom-title">Take a deep breath</strong>
-                        <span class="text-2xl ml-2">😮‍💨</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Take a deep breath'), 'Take a deep breath')" aria-label="Play audio for Take a deep breath">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Pause to calm down before continuing.</p>
-                    <p class="handwriting">Just <strong class="idiom-title">take a deep breath</strong> and start your speech when you feel ready.</p>
-                </div>
-
-                <!-- 87 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">87.</span>
-                        <strong class="text-xl idiom-title">Come hell or high water</strong>
-                        <span class="text-2xl ml-2">🌊</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Come hell or high water'), 'Come hell or high water')" aria-label="Play audio for Come hell or high water">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">No matter what difficulties arise.</p>
-                    <p class="handwriting">We will finish this project by the deadline, <strong class="idiom-title">come hell or high water</strong>.</p>
-                </div>
-
-                <!-- 88 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">88.</span>
-                        <strong class="text-xl idiom-title">Give and take</strong>
-                        <span class="text-2xl ml-2">🤲</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Give and take'), 'Give and take')" aria-label="Play audio for Give and take">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Compromise between opposing positions.</p>
-                    <p class="handwriting">A good friendship requires a lot of <strong class="idiom-title">give and take</strong>.</p>
-                </div>
-
-                <!-- 89 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">89.</span>
-                        <strong class="text-xl idiom-title">Keep your shirt on</strong>
-                        <span class="text-2xl ml-2">👚</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Keep your shirt on'), 'Keep your shirt on')" aria-label="Play audio for Keep your shirt on">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Remain calm; don't get angry.</p>
-                    <p class="handwriting"><strong class="idiom-title">Keep your shirt on</strong>, I'll be there in five minutes!</p>
-                </div>
-
-                <!-- 90 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">90.</span>
-                        <strong class="text-xl idiom-title">Up in the air</strong>
-                        <span class="text-2xl ml-2">🪁</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Up in the air'), 'Up in the air')" aria-label="Play audio for Up in the air">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Uncertain or undecided.</p>
-                    <p class="handwriting">Our travel plans for next summer are still <strong class="idiom-title">up in the air</strong>.</p>
-                </div>
-
-                <!-- 91 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">91.</span>
-                        <strong class="text-xl idiom-title">Have bigger fish to fry</strong>
-                        <span class="text-2xl ml-2">🎣</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Have bigger fish to fry'), 'Have bigger fish to fry')" aria-label="Play audio for Have bigger fish to fry">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Have more important things to do.</p>
-                    <p class="handwriting">I can't help you with that small task; I have <strong class="idiom-title">bigger fish to fry</strong> right now.</p>
-                </div>
-
-                <!-- 92 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">92.</span>
-                        <strong class="text-xl idiom-title">Spill the beans</strong>
-                        <span class="text-2xl ml-2">🍲</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Spill the beans'), 'Spill the beans')" aria-label="Play audio for Spill the beans">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Reveal a secret.</p>
-                    <p class="handwriting">Come on, don't keep me waiting—<strong class="idiom-title">spill the beans</strong> about your new job!</p>
-                </div>
-
-                <!-- 93 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">93.</span>
-                        <strong class="text-xl idiom-title">Be on cloud nine</strong>
-                        <span class="text-2xl ml-2">☁️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Be on cloud nine'), 'Be on cloud nine')" aria-label="Play audio for Be on cloud nine">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Be extremely happy.</p>
-                    <p class="handwriting">She has been <strong class="idiom-title">on cloud nine</strong> since she got into her dream university.</p>
-                </div>
-
-                <!-- 94 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">94.</span>
-                        <strong class="text-xl idiom-title">Walk on air</strong>
-                        <span class="text-2xl ml-2">🎈</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Walk on air'), 'Walk on air')" aria-label="Play audio for Walk on air">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Be extremely happy or excited.</p>
-                    <p class="handwriting">He was practically <strong class="idiom-title">walking on air</strong> after his successful performance.</p>
-                </div>
-
-                <!-- 95 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">95.</span>
-                        <strong class="text-xl idiom-title">A red letter day</strong>
-                        <span class="text-2xl ml-2">📅</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('A red letter day'), 'A red letter day')" aria-label="Play audio for A red letter day">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">A significant, memorable, or joyful day.</p>
-                    <p class="handwriting">My graduation day was truly <strong class="idiom-title">a red letter day</strong> for my whole family.</p>
-                </div>
-
-                <!-- 96 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">96.</span>
-                        <strong class="text-xl idiom-title">To each their own</strong>
-                        <span class="text-2xl ml-2">🤷</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('To each their own'), 'To each their own')" aria-label="Play audio for To each their own">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Everyone has their own preferences.</p>
-                    <p class="handwriting">I wouldn't choose that colour, but <strong class="idiom-title">to each their own</strong>.</p>
-                </div>
-
-                <!-- 97 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">97.</span>
-                        <strong class="text-xl idiom-title">Know by heart</strong>
-                        <span class="text-2xl ml-2">❤️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Know by heart'), 'Know by heart')" aria-label="Play audio for Know by heart">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">To memorize something completely.</p>
-                    <p class="handwriting">You need to <strong class="idiom-title">know these rules by heart</strong> for the exam.</p>
-                </div>
-
-                <!-- 98 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">98.</span>
-                        <strong class="text-xl idiom-title">The early bird catches the worm</strong>
-                        <span class="text-2xl ml-2">🐦</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('The early bird catches the worm'), 'The early bird catches the worm')" aria-label="Play audio for The early bird catches the worm">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Success comes to those who prepare well and start early.</p>
-                    <p class="handwriting">If you want to get the best seats, remember: <strong class="idiom-title">the early bird catches the worm</strong>.</p>
-                </div>
-
-                <!-- 99 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">99.</span>
-                        <strong class="text-xl idiom-title">Better safe than sorry</strong>
-                        <span class="text-2xl ml-2">⛑️</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Better safe than sorry'), 'Better safe than sorry')" aria-label="Play audio for Better safe than sorry">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">It is better to take precautions than to regret the consequences.</p>
-                    <p class="handwriting">Put on sunscreen, just to be on the safe side—<strong class="idiom-title">better safe than sorry</strong>.</p>
-                </div>
-
-                <!-- 100 -->
-                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
-                    <div class="flex items-center mb-1">
-                        <span class="text-xl font-bold text-gray-700 mr-2">100.</span>
-                        <strong class="text-xl idiom-title">Time flies</strong>
-                        <span class="text-2xl ml-2">⏳</span>
-                        <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('Time flies'), 'Time flies')" aria-label="Play audio for Time flies">&#128266;</button>
-                    </div>
-                    <p class="idiom-meaning mb-2">Time passes quickly.</p>
-                    <p class="handwriting">I can't believe the holidays are over already; <strong class="idiom-title">time flies</strong>!</p>
-                </div>
-                
+            <!-- Idioms List Section -->
+            <div id="idiom-list">
+                <div id="idiom-list-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- Idiom cards will be injected here by renderIdiomList() on load -->
+                    <p class="text-center text-gray-500 col-span-full">Loading idioms...</p>
+                </div>
+            </div>
+
+            <!-- Quiz Container (Hidden by default) -->
+            <div id="quiz-container" class="mt-10 hidden">
+                <div id="quiz-area">
+                    <!-- Questions rendered here -->
+                </div>
+                <div id="quiz-results" class="hidden">
+                    <!-- Results rendered here -->
+                </div>
+            </div>
+
+            <!-- Start Test Button Container -->
+            <div id="start-quiz-btn-container" class="text-center mt-10">
+                <button onclick="startQuiz()" class="px-8 py-4 bg-blue-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-blue-700 transition duration-200 text-lg">
+                    Start Idioms Test (20 Questions)
+                </button>
             </div>
 
             <footer class="text-center mt-10 pt-4 border-t-2 border-gray-200">
@@ -1322,3 +486,4 @@
     </main>
 </body>
 </html>
+
