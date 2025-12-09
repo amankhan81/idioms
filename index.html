@@ -6,8 +6,8 @@
     <title>100 Most Common Idioms for IGCSE English</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), Graduate (Title), and Montserrat (Idiom Text) -->
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), Graduate (Title), and Inter (Idiom Entry Text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&family=Inter:wght@600;700;900&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS */
         .handwriting {
@@ -16,14 +16,23 @@
             color: #000;
         }
         
-        /* Idiom text style (within sentence AND card header) */
+        /* Idiom text style (within card header - now using Inter for Aptos feel and reduced size) */
         .idiom-title {
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 1.25rem; /* Slightly larger */
+            font-family: 'Inter', sans-serif; /* Using Inter for Aptos/clean sans-serif feel */
+            font-size: 1.1rem; /* Slightly smaller than before (1.25rem) */
             color: #1e40af; /* Dark blue for strong contrast */
             font-weight: 700;
             /* Subtle 3D text shadow */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2), 0 0 1px #ffffff;
+        }
+        
+        /* Style for highlighted idiom inside the example sentence (NO CHANGE, RED, BOLD, KALAM FONT) */
+        .example-highlight {
+            font-family: 'Kalam', cursive; /* Match surrounding handwriting font */
+            font-size: 1.125rem; /* Match surrounding handwriting size */
+            color: #dc2626; /* RED color */
+            font-weight: 700; /* Bold */
+            text-shadow: none; /* Remove subtle text-shadow for clarity */
         }
         
         /* Style for Meanings: Dark Green and Nunito Font */
@@ -339,7 +348,7 @@
                         const themeClass = CARD_THEMES[index % CARD_THEMES.length];
                         
                         // FIX: Replace the placeholder '__' with the correctly formatted idiom
-                        const highlightedExample = d.example.replace('__', `<strong class="idiom-title">${d.correctWord}</strong>`);
+                        const highlightedExample = d.example.replace('__', `<strong class="example-highlight">${d.correctWord}</strong>`);
                         
                         return `
                             <div class="p-4 rounded-xl idiom-card ${themeClass}">
