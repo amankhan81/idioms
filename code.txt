@@ -10,19 +10,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&family=Inter:wght@600;700;900&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS */
+        
+        /* FIX: Ensure body takes up full height and allows scrolling within main content */
+        html { scroll-padding-top: 150px; } /* Provide scroll space above fixed header */
+        body { margin: 0; padding-top: 150px; /* Space for the fixed header */ background-color: #f3f4f6; }
+
+        /* FIX: Container for the fixed header elements */
+        #fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff; /* Ensure header content is opaque */
+        }
+
         .handwriting {
             font-family: 'Kalam', cursive;
-            font-size: 1.125rem; /* text-lg */
-            color: #262626; /* Dark gray for handwriting readability */
+            font-size: 1.125rem;
+            color: #262626;
         }
         
         /* Idiom text style (within card header) */
         .idiom-title {
             font-family: 'Inter', sans-serif;
             font-size: 1.1rem;
-            color: #1e40af; /* Dark blue for strong contrast */
-            font-weight: 800; /* Extra bold */
-            /* Enhanced 3D text shadow for pop */
+            color: #1e40af;
+            font-weight: 800;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3), 0 0 2px #ffffff;
         }
         
@@ -30,7 +45,7 @@
         .example-highlight {
             font-family: 'Kalam', cursive; 
             font-size: 1.125rem; 
-            color: #dc2626; /* RED color */
+            color: #dc2626; 
             font-weight: 700; 
             text-shadow: none;
         }
@@ -38,7 +53,7 @@
         /* Style for Meanings: Dark Green and Nunito Font */
         .idiom-meaning {
             font-family: 'Nunito', sans-serif;
-            color: #065f46; /* Deeper Green (green-800) */
+            color: #065f46;
             font-weight: 600;
             font-size: 1rem;
         }
@@ -46,37 +61,34 @@
         /* Stylish Title Font: Graduate, Red, Bold */
         .main-title {
             font-family: 'Graduate', cursive;
-            color: #b91c1c; /* Slightly deeper red */
-            font-weight: 900; /* Black font weight */
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Strong header shadow */
+            color: #b91c1c;
+            font-weight: 900;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
         
         .speaker-btn {
             background-color: transparent;
             border: none;
-            color: #059669; /* Tailwind emerald-600 */
+            color: #059669;
             cursor: pointer;
             padding: 0;
             margin-left: 0.5rem;
             transition: transform 0.1s;
         }
         .speaker-btn:hover {
-            transform: scale(1.2); /* More aggressive hover scale */
+            transform: scale(1.2);
             color: #10b981;
         }
 
-        /* --- REDESIGNED CARD STYLES (3D / Neumorphic Look) --- */
-        
-        /* Themed Background Gradients */
-        .theme-1 { background: linear-gradient(145deg, #e0f2fe, #dbeafe); } /* Light Blue */
-        .theme-2 { background: linear-gradient(145deg, #d1fae5, #a7f3d0); } /* Light Green */
-        .theme-3 { background: linear-gradient(145deg, #ffedd5, #fed7aa); } /* Light Peach */
-        .theme-4 { background: linear-gradient(145deg, #ede9fe, #ddd6fe); } /* Light Purple */
+        /* --- CARD STYLES --- */
+        .theme-1 { background: linear-gradient(145deg, #e0f2fe, #dbeafe); border-color: #dbeafe; }
+        .theme-2 { background: linear-gradient(145deg, #d1fae5, #a7f3d0); border-color: #a7f3d0; }
+        .theme-3 { background: linear-gradient(145deg, #ffedd5, #fed7aa); border-color: #fed7aa; }
+        .theme-4 { background: linear-gradient(145deg, #ede9fe, #ddd6fe); border-color: #ddd6fe; }
 
         .idiom-card {
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 12px;
-            /* Complex shadow for depth */
             box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2), -3px -3px 8px rgba(255, 255, 255, 0.8);
             transition: all 0.3s ease;
         }
@@ -91,59 +103,57 @@
 
         /* Start Button Shine Effect */
         .start-btn-shine {
-            /* Deeper base color */
             background-color: #1d4ed8;
-            /* Complex shadow for a raised, shiny look */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
             transition: all 0.2s ease;
         }
         .start-btn-shine:hover {
-            /* Slight lift and color change */
             background-color: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.2);
         }
         
-        /* --- QUIZ STYLES (Kept functional, enhanced shadows) --- */
+        /* Quiz Styles (Kept functional) */
         .quiz-option {
             background: linear-gradient(145deg, #f9f9f9, #e9e9e9);
             box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.8);
             border-radius: 8px;
         }
-        
-        /* Feedback Styles */
-        .correct-answer {
-            background: linear-gradient(145deg, #c3f6d7, #99e6b4); 
-            border-color: #047857; 
-            box-shadow: 0 0 12px #059669; 
-        }
-        .incorrect-answer {
-            background: linear-gradient(145deg, #fecaca, #fca5a5); 
-            border-color: #b91c1c; 
-            box-shadow: 0 0 12px #ef4444;
-        }
+        .correct-answer { background: linear-gradient(145deg, #c3f6d7, #99e6b4); border-color: #047857; box-shadow: 0 0 12px #059669; }
+        .incorrect-answer { background: linear-gradient(145deg, #fecaca, #fca5a5); border-color: #b91c1c; box-shadow: 0 0 12px #ef4444; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans" onload="initializeApp()">
 
-    <!-- New Full-Width Blue Header -->
-    <div class="w-full bg-blue-700 text-white py-4 text-center font-black text-xl shadow-lg">
-        Created by Amanullah Khan
-    </div>
-
-    <!-- Main Content Wrapper with Padding -->
-    <main class="flex-grow p-4 sm:p-8">
-        <div class="max-w-4xl mx-auto bg-white shadow-3xl rounded-xl p-6 sm:p-10">
-            
-            <header class="text-center mb-10 border-b-4 border-blue-500 pb-4">
-                <h1 class="main-title text-2xl sm:text-3xl md:text-4xl mb-2">
+    <!-- FIXED HEADER AREA -->
+    <div id="fixed-header">
+        <!-- Creator Bar -->
+        <div class="w-full bg-blue-700 text-white py-2 text-center font-black text-sm shadow-md">
+            Created by Amanullah Khan
+        </div>
+        
+        <!-- Main Title and Button Container -->
+        <div class="max-w-4xl mx-auto px-4 py-3 bg-white border-b border-blue-200">
+            <header class="text-center">
+                <h1 class="main-title text-2xl sm:text-3xl md:text-4xl mb-3">
                     100 Idioms for IGCSE English 0510
                 </h1>
-                <p class="text-lg text-gray-500 mt-2">
-                    Vocabulary Study & Practice Test
-                </p>
             </header>
 
+            <!-- Start Test Button (Moved Here) -->
+            <div id="start-quiz-btn-container" class="text-center mb-2">
+                <button onclick="startQuiz()" class="px-6 py-3 start-btn-shine text-white font-extrabold rounded-xl text-md sm:text-lg">
+                    Start Idioms Test (20 Questions)
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- END FIXED HEADER AREA -->
+
+    <!-- Main Content Wrapper -->
+    <main class="flex-grow p-4 sm:p-8 pt-0">
+        <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 sm:p-10">
+            
             <!-- Quiz Script and Data -->
             <script>
                 // Global initialization function to run on body load
@@ -555,16 +565,10 @@
                     <!-- Results rendered here -->
                 </div>
             </div>
-
-            <!-- Start Test Button Container -->
-            <div id="start-quiz-btn-container" class="text-center mt-10">
-                <button onclick="startQuiz()" class="px-8 py-4 start-btn-shine text-white font-extrabold rounded-xl text-lg">
-                    Start Idioms Test (20 Questions)
-                </button>
-            </div>
-
+            
+            <!-- Footer Content (Used for spacing/alignment only in this structure) -->
             <footer class="text-center mt-10 pt-4 border-t-2 border-gray-200">
-                <p class="text-gray-500 text-sm">Use these naturally in your Exercise 5 emails to demonstrate fluency and command of informal English vocabulary.</p>
+                <p class="text-gray-500 text-sm">Review these idioms before starting the test!</p>
             </footer>
 
         </div>
