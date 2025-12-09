@@ -6,8 +6,8 @@
     <title>100 Most Common Idioms for IGCSE English</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), and Graduate (Title) -->
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&display=swap" rel="stylesheet">
+    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), Graduate (Title), and Montserrat (Idiom Text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         /* Custom CSS */
         .handwriting {
@@ -15,10 +15,17 @@
             font-size: 1.125rem; /* text-lg */
             color: #000;
         }
+        
+        /* Idiom text style (within sentence AND card header) */
         .idiom-title {
-            color: #3b82f6; /* Tailwind blue-500 */
-            font-weight: 700; /* font-bold */
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 1.25rem; /* Slightly larger */
+            color: #1e40af; /* Dark blue for strong contrast */
+            font-weight: 700;
+            /* Subtle 3D text shadow */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2), 0 0 1px #ffffff;
         }
+        
         /* Style for Meanings: Dark Green and Nunito Font */
         .idiom-meaning {
             font-family: 'Nunito', sans-serif;
@@ -45,21 +52,66 @@
             transform: scale(1.1);
             color: #059669;
         }
-        /* Quiz Feedback Styles */
-        .quiz-option:hover:not([disabled]) {
-            background-color: #eff6ff; /* Blue-50 */
+
+        /* --- REDESIGNED CARD STYLES (3D / Neumorphic Look) --- */
+        
+        /* Themed Background Gradients */
+        .theme-1 { background: linear-gradient(145deg, #f0f9ff, #e0f2fe); border-color: #dbeafe; } /* Light Blue */
+        .theme-2 { background: linear-gradient(145deg, #f0fff4, #d1fae5); border-color: #a7f3d0; } /* Light Green */
+        .theme-3 { background: linear-gradient(145deg, #fff7ed, #ffedd5); border-color: #fed7aa; } /* Light Peach */
+        .theme-4 { background: linear-gradient(145deg, #f5f3ff, #ede9fe); border-color: #ddd6fe; } /* Light Purple */
+
+        .idiom-card {
+            border: 1px solid #dbeafe;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
         }
+        .idiom-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15), -5px -5px 10px rgba(255, 255, 255, 0.8);
+        }
+        .idiom-id {
+            color: #1e40af; /* Darker blue number */
+            font-weight: 800;
+        }
+        /* --- QUIZ STYLES --- */
+        .quiz-option {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+        .quiz-option:hover:not([disabled]) {
+            transform: translateY(-1px);
+            background: linear-gradient(145deg, #e0f2fe, #f0f9ff);
+        }
+        
+        /* Feedback Styles */
         .correct-answer {
-            background-color: #d1fae5; /* Green-100 */
-            border-color: #10b981; /* Emerald-500 */
-            box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(145deg, #d1fae5, #ecfdf5); 
+            border-color: #10b981; 
+            box-shadow: 0 0 10px #10b981; 
+            animation: pulse-correct 0.3s;
         }
         .incorrect-answer {
-            background-color: #fee2e2; /* Red-100 */
-            border-color: #f87171; /* Red-400 */
+            background: linear-gradient(145deg, #fee2e2, #fef2f2); 
+            border-color: #f87171; 
+            box-shadow: 0 0 10px #f87171;
+            animation: shake 0.3s;
         }
-        .quiz-option[disabled] {
-            cursor: default;
+
+        /* Keyframes for dramatic feedback */
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
         }
     </style>
 </head>
@@ -88,8 +140,9 @@
                 // Variable to hold the currently playing audio element
                 let currentAudio = null;
                 const FEEDBACK_DELAY_MS = 1500; // Time to show feedback before next question
+                const CARD_THEMES = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
 
-                // --- MASTER LIST OF 100 IDIOMS (TRUNCATED) ---
+                // --- MASTER LIST OF 100 IDIOMS ---
                 const ALL_IDIOMS_DATA = [
                     { id: 1, idiom: "Over the moon", emoji: "😊", meaning: "Extremely happy and delighted.", example: "I was __ when I heard I got the concert tickets!", correctWord: "over the moon" },
                     { id: 2, idiom: "A piece of cake", emoji: "🍰", meaning: "Something very easy to do.", example: "Don't worry about the history test, it'll be __ for you.", correctWord: "a piece of cake" },
@@ -202,7 +255,7 @@
                     return idiom.toLowerCase().replace(/\s+/g, '_') + '.mp3';
                 }
                 
-                // --- NEW AUDIO FEEDBACK FUNCTIONS ---
+                // --- AUDIO FEEDBACK FUNCTIONS ---
                 function playCorrectSound() {
                     const audio = new Audio('correct.mp3');
                     audio.play().catch(e => console.warn("Could not play correct.mp3:", e));
@@ -281,14 +334,17 @@
                     const idiomListContainer = document.getElementById('idiom-list-content');
                     if (!idiomListContainer) return; // Safety check
                     
-                    const listHTML = ALL_IDIOMS_DATA.map(d => {
+                    const listHTML = ALL_IDIOMS_DATA.map((d, index) => {
+                        // Cycle through themes
+                        const themeClass = CARD_THEMES[index % CARD_THEMES.length];
+                        
                         // FIX: Replace the placeholder '__' with the correctly formatted idiom
                         const highlightedExample = d.example.replace('__', `<strong class="idiom-title">${d.correctWord}</strong>`);
                         
                         return `
-                            <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-200">
+                            <div class="p-4 rounded-xl idiom-card ${themeClass}">
                                 <div class="flex items-center mb-1">
-                                    <span class="text-xl font-bold text-gray-700 mr-2">${d.id}.</span>
+                                    <span class="text-xl idiom-id mr-2">${d.id}.</span>
                                     <strong class="text-xl idiom-title">${d.idiom}</strong>
                                     <span class="text-2xl ml-2">${d.emoji}</span>
                                     <button class="speaker-btn text-3xl" onclick="playAudio(createFilename('${d.idiom}'), '${d.idiom}')" aria-label="Play audio for ${d.idiom}">
@@ -349,7 +405,7 @@
                             <form id="quiz-form" onsubmit="event.preventDefault(); checkAnswer();">
                                 <div class="space-y-4">
                                     ${q.choices.map((choice, index) => `
-                                        <label id="choice-${index}" data-correct="${choice.correct}" class="quiz-option block cursor-pointer p-4 bg-gray-50 hover:bg-blue-100 rounded-lg border border-gray-300 transition duration-150">
+                                        <label id="choice-${index}" data-correct="${choice.correct}" class="quiz-option block cursor-pointer p-4 bg-gray-50 rounded-lg border border-gray-300 transition duration-150">
                                             <input type="radio" name="answer" value="${choice.text}" class="mr-3 text-blue-600 focus:ring-blue-500">
                                             <span class="font-medium text-gray-800">${choice.text}</span>
                                         </label>
@@ -418,7 +474,7 @@
 
                     const isCorrect = (userAnswer === correctAnswerText);
 
-                    // FIX: Increment score if correct
+                    // Increment score if correct
                     if (isCorrect) {
                         score++;
                     }
@@ -491,4 +547,3 @@
     </main>
 </body>
 </html>
-
