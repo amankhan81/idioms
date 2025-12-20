@@ -28,26 +28,27 @@
 
         .handwriting {
             font-family: 'Kalam', cursive;
-            font-size: 1.125rem;
+            font-size: 1.125rem; /* text-lg */
             color: #262626;
         }
         
-        /* Idiom text style (within card header) */
+        /* Idiom text style (within card header - now using Inter for Aptos feel and reduced size) */
         .idiom-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.1rem;
-            color: #1e40af;
+            font-family: 'Inter', sans-serif; /* Using Inter for Aptos/clean sans-serif feel */
+            font-size: 1.1rem; /* Slightly smaller than before (1.25rem) */
+            color: #1e40af; /* Dark blue for strong contrast */
             font-weight: 800;
+            /* Subtle 3D text shadow */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3), 0 0 2px #ffffff;
         }
         
-        /* Style for highlighted idiom inside the example sentence */
+        /* Style for highlighted idiom inside the example sentence (RED, BOLD, KALAM FONT) */
         .example-highlight {
-            font-family: 'Kalam', cursive; 
-            font-size: 1.125rem; 
-            color: #dc2626; 
-            font-weight: 700; 
-            text-shadow: none;
+            font-family: 'Kalam', cursive; /* Match surrounding handwriting font */
+            font-size: 1.125rem; /* Match surrounding handwriting size */
+            color: #dc2626; /* RED color */
+            font-weight: 700; /* Bold */
+            text-shadow: none; /* Remove subtle text-shadow for clarity */
         }
         
         /* Style for Meanings: Dark Green and Nunito Font */
@@ -132,20 +133,30 @@
             Created by Amanullah Khan
         </div>
         
-        <!-- Main Title and Button Container -->
+        <!-- Main Title and Controls Container -->
         <div class="max-w-4xl mx-auto px-4 py-3 bg-white border-b border-blue-200">
             <header class="text-center">
-                <h1 class="main-title text-2xl sm:text-3xl md:text-4xl mb-3">
+                <h1 class="main-title text-2xl sm:text-3xl md:text-4xl mb-2">
                     100 Idioms for IGCSE English 0510
                 </h1>
             </header>
 
-            <!-- Start Test Button (Moved Here) -->
-            <div id="start-quiz-btn-container" class="text-center mb-2">
-                <button onclick="startQuiz()" class="px-6 py-3 start-btn-shine text-white font-extrabold rounded-xl text-md sm:text-lg">
-                    Start Idioms Test (20 Questions)
-                </button>
+            <!-- Search Bar and Button (Inline Control Row) -->
+            <div class="flex items-center justify-between w-full mb-2 space-x-4">
+                
+                <!-- Search Bar (Left) - FIX: width set to w-1/2 -->
+                <input type="text" id="idiom-search" onkeyup="filterIdioms()" placeholder="Search idiom or meaning..." class="w-1/2 p-2 border border-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 text-sm">
+                
+                <!-- Button/Quiz Container (Right) -->
+                <div id="start-quiz-btn-container" class="flex flex-col items-end">
+                    <button onclick="startQuiz()" class="px-4 py-2 start-btn-shine text-white font-extrabold rounded-xl text-md sm:text-lg whitespace-nowrap">
+                        Take Test
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1">Practice Quiz: 20 Questions</p>
+                </div>
             </div>
+            <!-- End Inline Control Row -->
+
         </div>
     </div>
     <!-- END FIXED HEADER AREA -->
@@ -233,7 +244,7 @@
                     { id: 63, idiom: "The bottom line", emoji: "📝", meaning: "The most important factor or result.", example: "__ is that we need to finish this report by Friday.", correctWord: "The bottom line" },
                     { id: 64, idiom: "Turn a blind eye", emoji: "🙈", meaning: "To pretend not to notice something bad or illegal.", example: "The teacher chose to __ to the small whispering.", correctWord: "turn a blind eye" },
                     { id: 65, idiom: "Get the ball rolling", emoji: "⚽", meaning: "To start an activity or process.", example: "Let's __ and start planning our next holiday.", correctWord: "get the ball rolling" },
-                    { id: 66, idiom: "By the skin of one's teeth", emoji: "🦷", meaning: "Just barely succeeding in doing something.", example: "I passed the driving test only __.", correctWord: "by the skin of my teeth" },
+                    { id: 66, idiom: "By the skin of one's teeth", emoji: "🦷", meaning: "Just barely succeeding in doing something.", example: "I passed the driving test only __.", correctWord: "by the skin of one's teeth" },
                     { id: 67, idiom: "Give someone the cold shoulder", emoji: "🥶", meaning: "To intentionally ignore someone.", example: "I tried to talk to her, but she just __.", correctWord: "gave me the cold shoulder" },
                     { id: 68, idiom: "No pain, no gain", emoji: "💪", meaning: "Suffering is necessary to achieve success.", example: "You must practice every day; __!", correctWord: "no pain, no gain" },
                     { id: 69, idiom: "Jump the gun", emoji: "🏃", meaning: "To start doing something too soon or prematurely.", example: "We should wait for the official announcement and not __.", correctWord: "jump the gun" },
@@ -279,7 +290,6 @@
 
                 function createFilename(idiomId) {
                     // FIX: Return the zero-padded ID number followed by .mp3
-                    // Example: 1 -> "01.mp3", 10 -> "10.mp3", 100 -> "100.mp3"
                     const idString = idiomId.toString().padStart(2, '0');
                     return `${idString}.mp3`;
                 }
@@ -363,16 +373,31 @@
                     return question;
                 }
 
-                // --- FUNCTION TO RENDER LIST ON PAGE LOAD ---
-                function renderIdiomList() {
+                // --- FUNCTION TO RENDER LIST ON PAGE LOAD & FILTERING ---
+                function filterIdioms() {
+                    const searchTerm = document.getElementById('idiom-search').value.toLowerCase();
+                    
+                    const filteredData = ALL_IDIOMS_DATA.filter(d => {
+                        return (
+                            d.idiom.toLowerCase().includes(searchTerm) ||
+                            d.meaning.toLowerCase().includes(searchTerm) ||
+                            d.example.toLowerCase().includes(searchTerm)
+                        );
+                    });
+
+                    renderIdiomList(filteredData);
+                }
+
+
+                function renderIdiomList(dataToRender = ALL_IDIOMS_DATA) {
                     const idiomListContainer = document.getElementById('idiom-list-content');
                     if (!idiomListContainer) return; // Safety check
                     
-                    const listHTML = ALL_IDIOMS_DATA.map((d, index) => {
+                    const listHTML = dataToRender.map((d, index) => {
                         // Cycle through themes
                         const themeClass = CARD_THEMES[index % CARD_THEMES.length];
                         
-                        // FIX: Replace the placeholder '__' with the correctly formatted idiom (using example-highlight class)
+                        // Replace the placeholder '__' with the correctly formatted idiom (using example-highlight class)
                         const highlightedExample = d.example.replace('__', `<strong class="example-highlight">${d.correctWord}</strong>`);
                         
                         return `
@@ -391,7 +416,11 @@
                         `;
                     }).join('');
 
-                    idiomListContainer.innerHTML = listHTML;
+                    if (dataToRender.length === 0) {
+                        idiomListContainer.innerHTML = '<p class="text-center text-red-500 col-span-full mt-10">No idioms matched your search criteria.</p>';
+                    } else {
+                        idiomListContainer.innerHTML = listHTML;
+                    }
                 }
                 // --- END LIST RENDER FUNCTION ---
 
@@ -565,7 +594,7 @@
                     <!-- Results rendered here -->
                 </div>
             </div>
-            
+
             <!-- Footer Content (Used for spacing/alignment only in this structure) -->
             <footer class="text-center mt-10 pt-4 border-t-2 border-gray-200">
                 <p class="text-gray-500 text-sm">Review these idioms before starting the test!</p>
