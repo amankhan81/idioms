@@ -1,606 +1,1334 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100 Idioms for IGCSE English 0510</title>
+    <title>100 Idioms for IGCSE English 0510 - Study Hub</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Fonts: Kalam (Handwriting), Nunito (Meanings), Graduate (Title), and Inter (Idiom Entry Text) -->
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@400;600;700&family=Graduate&family=Inter:wght@600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f7ff',
+                            100: '#ebf0ff',
+                            500: '#3b82f6',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        handwriting: ['Kalam', 'cursive'],
+                        title: ['Graduate', 'serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800&family=Graduate&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Custom CSS */
+        /* CSS 3D Flipping Engine for Flashcards */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
         
-        /* FIX: Ensure body takes up full height and allows scrolling within main content */
-        html { scroll-padding-top: 150px; } /* Provide scroll space above fixed header */
-        body { margin: 0; padding-top: 150px; /* Space for the fixed header */ background-color: #f3f4f6; }
-
-        /* FIX: Container for the fixed header elements */
-        #fixed-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff; /* Ensure header content is opaque */
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.6);
         }
 
-        .handwriting {
-            font-family: 'Kalam', cursive;
-            font-size: 1.125rem; /* text-lg */
-            color: #262626;
+        /* 3D Soft shadows */
+        .card-shadow-light {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
         }
-        
-        /* Idiom text style (within card header - now using Inter for Aptos feel and reduced size) */
-        .idiom-title {
-            font-family: 'Inter', sans-serif; /* Using Inter for Aptos/clean sans-serif feel */
-            font-size: 1.1rem; /* Slightly smaller than before (1.25rem) */
-            color: #1e40af; /* Dark blue for strong contrast */
-            font-weight: 800;
-            /* Subtle 3D text shadow */
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3), 0 0 2px #ffffff;
+        .card-shadow-premium {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        
-        /* Style for highlighted idiom inside the example sentence (RED, BOLD, KALAM FONT) */
+
+        /* Highlighted idiom inside example sentences */
         .example-highlight {
-            font-family: 'Kalam', cursive; /* Match surrounding handwriting font */
-            font-size: 1.125rem; /* Match surrounding handwriting size */
-            color: #dc2626; /* RED color */
-            font-weight: 700; /* Bold */
-            text-shadow: none; /* Remove subtle text-shadow for clarity */
+            font-family: 'Kalam', cursive;
+            font-size: 1.125rem;
+            color: #dc2626;
+            font-weight: 700;
         }
-        
-        /* Style for Meanings: Dark Green and Nunito Font */
-        .idiom-meaning {
-            font-family: 'Nunito', sans-serif;
-            color: #065f46;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-        
-        /* Stylish Title Font: Graduate, Red, Bold */
-        .main-title {
-            font-family: 'Graduate', cursive;
-            color: #b91c1c;
-            font-weight: 900;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        .speaker-btn {
-            background-color: transparent;
-            border: none;
-            color: #059669;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 0.5rem;
-            transition: transform 0.1s;
-        }
-        .speaker-btn:hover {
-            transform: scale(1.2);
-            color: #10b981;
+        .dark .example-highlight {
+            color: #f87171;
         }
 
-        /* --- CARD STYLES --- */
-        .theme-1 { background: linear-gradient(145deg, #e0f2fe, #dbeafe); border-color: #dbeafe; }
-        .theme-2 { background: linear-gradient(145deg, #d1fae5, #a7f3d0); border-color: #a7f3d0; }
-        .theme-3 { background: linear-gradient(145deg, #ffedd5, #fed7aa); border-color: #fed7aa; }
-        .theme-4 { background: linear-gradient(145deg, #ede9fe, #ddd6fe); border-color: #ddd6fe; }
-
-        .idiom-card {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2), -3px -3px 8px rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-        }
-        .idiom-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.25), -6px -6px 12px rgba(255, 255, 255, 1);
-        }
-        .idiom-id {
-            color: #1e40af;
-            font-weight: 800;
+        /* Active buttons styling */
+        .btn-active {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
         }
 
-        /* Start Button Shine Effect */
-        .start-btn-shine {
-            background-color: #1d4ed8;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s ease;
+        /* Theme colors with left-border stripes */
+        .theme-card-1 {
+            border-left: 6px solid #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #e0f2fe);
         }
-        .start-btn-shine:hover {
-            background-color: #2563eb;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+        .theme-card-2 {
+            border-left: 6px solid #10b981;
+            background: linear-gradient(145deg, #ecfdf5, #d1fae5);
         }
-        
-        /* Quiz Styles (Kept functional) */
-        .quiz-option {
-            background: linear-gradient(145deg, #f9f9f9, #e9e9e9);
-            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
+        .theme-card-3 {
+            border-left: 6px solid #f59e0b;
+            background: linear-gradient(145deg, #fffbeb, #fef3c7);
         }
-        .correct-answer { background: linear-gradient(145deg, #c3f6d7, #99e6b4); border-color: #047857; box-shadow: 0 0 12px #059669; }
-        .incorrect-answer { background: linear-gradient(145deg, #fecaca, #fca5a5); border-color: #b91c1c; box-shadow: 0 0 12px #ef4444; }
+        .theme-card-4 {
+            border-left: 6px solid #8b5cf6;
+            background: linear-gradient(145deg, #f5f3ff, #ede9fe);
+        }
+
+        /* Dark mode equivalents */
+        .dark .theme-card-1 {
+            border-left: 6px solid #3b82f6;
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+        }
+        .dark .theme-card-2 {
+            border-left: 6px solid #10b981;
+            background: linear-gradient(145deg, #062f1e, #022c22);
+        }
+        .dark .theme-card-3 {
+            border-left: 6px solid #f59e0b;
+            background: linear-gradient(145deg, #2e1d03, #1c1917);
+        }
+        .dark .theme-card-4 {
+            border-left: 6px solid #8b5cf6;
+            background: linear-gradient(145deg, #1e1b4b, #0f172a);
+        }
+
+        /* Print formatting optimized for direct reference sheets */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+                padding-top: 20px !important;
+            }
+            .print-card {
+                page-break-inside: avoid !important;
+                border: 1px solid #94a3b8 !important;
+                border-left: 6px solid #1e3a8a !important;
+                background: white !important;
+                box-shadow: none !important;
+                color: black !important;
+                padding: 12px !important;
+            }
+            .print-title {
+                display: block !important;
+                font-size: 24px !important;
+                text-align: center !important;
+                margin-bottom: 10px !important;
+                color: #1e3a8a !important;
+                font-family: 'Graduate', serif !important;
+            }
+            .main-content-card {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans" onload="initializeApp()">
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col font-sans">
 
-    <!-- FIXED HEADER AREA -->
-    <div id="fixed-header">
-        <!-- Creator Bar -->
-        <div class="w-full bg-blue-700 text-white py-2 text-center font-black text-sm shadow-md">
-            Created by Amanullah Khan
-        </div>
+    <!-- TOP SYSTEM BAR (CREATOR) -->
+    <div class="w-full bg-indigo-950 text-indigo-200 py-1.5 px-4 text-center font-bold text-xs tracking-wider uppercase flex justify-between items-center z-50 shadow-sm no-print">
+        <span>Syllabus Code: IGCSE English 0510</span>
+        <span class="font-extrabold text-white">Created by Amanullah Khan</span>
+        <span class="hidden sm:inline bg-indigo-900 px-2 py-0.5 rounded text-[10px] text-indigo-300">Exam Prep Tool</span>
+    </div>
+
+    <!-- PREMIUM HERO BANNER -->
+    <div class="relative bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-8 px-4 sm:px-6 lg:px-8 text-center overflow-hidden shadow-lg no-print">
+        <!-- Abstract Background Glow Elements -->
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
         
-        <!-- Main Title and Controls Container -->
-        <div class="max-w-4xl mx-auto px-4 py-3 bg-white border-b border-blue-200">
-            <header class="text-center">
-                <h1 class="main-title text-2xl sm:text-3xl md:text-4xl mb-2">
-                    100 Idioms for IGCSE English 0510
-                </h1>
-            </header>
-
-            <!-- Search Bar and Button (Inline Control Row) -->
-            <div class="flex items-center justify-between w-full mb-2 space-x-4">
-                
-                <!-- Search Bar (Left) - FIX: width set to w-1/2 -->
-                <input type="text" id="idiom-search" onkeyup="filterIdioms()" placeholder="Search idiom or meaning..." class="w-1/2 p-2 border border-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 text-sm">
-                
-                <!-- Button/Quiz Container (Right) -->
-                <div id="start-quiz-btn-container" class="flex flex-col items-end">
-                    <button onclick="startQuiz()" class="px-4 py-2 start-btn-shine text-white font-extrabold rounded-xl text-md sm:text-lg whitespace-nowrap">
-                        Take Test
-                    </button>
-                    <p class="text-xs text-gray-500 mt-1">Practice Quiz: 20 Questions</p>
-                </div>
+        <div class="relative max-w-4xl mx-auto">
+            <!-- Academic Shield / Badge -->
+            <div class="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest mb-3">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Core Vocabulary Grid
             </div>
-            <!-- End Inline Control Row -->
+            
+            <h1 class="font-title text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-200 to-amber-400 drop-shadow-md tracking-tight mb-2">
+                100 IDIOMS
+            </h1>
+            <p class="text-slate-300 max-w-lg mx-auto text-sm sm:text-base font-semibold uppercase tracking-wide">
+                For IGCSE English 0510 Examination
+            </p>
+        </div>
+    </div>
+
+    <!-- PRINT ONLY TITLE BANNER -->
+    <div class="hidden print-title">
+        100 Idioms Master Sheet for IGCSE English 0510
+        <div style="font-size: 12px; font-weight: normal; color: #475569; margin-top: 4px;">Prepared by Amanullah Khan</div>
+    </div>
+
+    <!-- CONTROL CENTER & NAVIGATION (STICKY BAR) -->
+    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all py-3 px-4 no-print">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-3 items-center justify-between">
+            
+            <!-- Quick View Mode Selector -->
+            <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-full md:w-auto overflow-hidden">
+                <button onclick="setViewMode('list')" id="btn-view-list" class="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-300 transition duration-150 btn-active">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    List View
+                </button>
+                <button onclick="setViewMode('flashcard')" id="btn-view-flashcard" class="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-300 transition duration-150">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v12m0 0l-4-4m4 4l4-4m0 6V7m0 0l4 4m-4-4l-4 4"></path></svg>
+                    Flashcards
+                </button>
+                <button onclick="setViewMode('quiz')" id="btn-view-quiz" class="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg text-slate-600 dark:text-slate-300 transition duration-150">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    Practice Test
+                </button>
+            </div>
+
+            <!-- Search and Filter Bar (Only shown on List/Flashcard view) -->
+            <div id="search-filter-panel" class="flex items-center gap-2 w-full md:w-auto flex-1 max-w-lg">
+                <!-- Advanced Search Box -->
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="idiom-search" onkeyup="filterIdioms()" placeholder="Search from 100 idioms..." class="w-full pl-9 pr-8 py-2 text-sm bg-slate-100 dark:bg-slate-800 border-none rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100 transition shadow-inner">
+                    <button onclick="clearSearch()" id="clear-search-btn" class="absolute inset-y-0 right-0 hidden items-center pr-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Star Filter Toggle Button -->
+                <button onclick="toggleFavoritesOnlyFilter()" id="favorites-filter-btn" class="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-extrabold border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0 whitespace-nowrap">
+                    <svg id="filter-star-icon" class="w-4 h-4 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.18 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.49 11.112c-.773-.559-.374-1.81.588-1.81h4.906a1 1 0 00.95-.69l1.519-4.674z"></path></svg>
+                    Favorites Only
+                </button>
+            </div>
+
+            <!-- Utility Controls (Dark Mode, Print, History Pill) -->
+            <div class="flex items-center gap-2 justify-end w-full md:w-auto">
+                <!-- Print Tool Button -->
+                <button onclick="window.print()" title="Print Cheat Sheet" class="p-2 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                </button>
+
+                <!-- High Score Panel Pill -->
+                <button onclick="showScoreHistoryModal()" title="View Score History" class="flex items-center gap-1.5 px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-extrabold text-blue-600 dark:text-blue-400 transition">
+                    🏆 <span id="highest-score-pill">Best: --</span>
+                </button>
+
+                <!-- Dark Mode System Switch -->
+                <button onclick="toggleDarkMode()" id="dark-mode-btn" class="p-2 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition" aria-label="Toggle Dark Mode">
+                    <svg id="moon-icon" class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg id="sun-icon" class="w-4 h-4 text-amber-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                </button>
+            </div>
 
         </div>
     </div>
-    <!-- END FIXED HEADER AREA -->
 
-    <!-- Main Content Wrapper -->
-    <main class="flex-grow p-4 sm:p-8 pt-0">
-        <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 sm:p-10">
+    <!-- MAIN BODY SPACE -->
+    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
+        
+        <!-- COUNTER STATS STRIP -->
+        <div id="stats-counter-bar" class="mb-4 flex justify-between items-center text-xs font-extrabold text-slate-500 dark:text-slate-400 px-1.5 no-print">
+            <span id="rendered-count-label">Showing 100 of 100 idioms</span>
+            <span id="favorites-count-label" class="text-blue-600 dark:text-blue-400">★ 0 Bookmarked</span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm main-content-card">
             
-            <!-- Quiz Script and Data -->
-            <script>
-                // Global initialization function to run on body load
-                function initializeApp() {
-                    renderIdiomList();
-                }
-
-                // Variable to hold the currently playing audio element
-                let currentAudio = null;
-                const FEEDBACK_DELAY_MS = 1500; // Time to show feedback before next question
-                const CARD_THEMES = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
-
-                // --- MASTER LIST OF 100 IDIOMS ---
-                const ALL_IDIOMS_DATA = [
-                    { id: 1, idiom: "Over the moon", emoji: "😊", meaning: "Extremely happy and delighted.", example: "I was __ when I heard I got the concert tickets!", correctWord: "over the moon" },
-                    { id: 2, idiom: "A piece of cake", emoji: "🍰", meaning: "Something very easy to do.", example: "Don't worry about the history test, it'll be __ for you.", correctWord: "a piece of cake" },
-                    { id: 3, idiom: "Take a rain check", emoji: "☔", meaning: "To politely decline an invitation, but offer to do it later.", example: "I can't make it to the party tonight, but can I __ for next time?", correctWord: "take a rain check" },
-                    { id: 4, idiom: "Let the cat out of the bag", emoji: "🐈", meaning: "To accidentally reveal a secret.", example: "Oops! I think I __ about your surprise party.", correctWord: "let the cat out of the bag" },
-                    { id: 5, idiom: "Speak of the devil", emoji: "🗣️", meaning: "Said when the person you were just talking about unexpectedly appears.", example: "__, Jane just walked into the room!", correctWord: "Speak of the devil" },
-                    { id: 6, idiom: "Every cloud has a silver lining", emoji: "☁️", meaning: "Be optimistic; difficult times will lead to better days.", example: "I know failing the exam was tough, but remember, __.", correctWord: "every cloud has a silver lining" },
-                    { id: 7, idiom: "Under the weather", emoji: "🤕", meaning: "Slightly ill or unwell.", example: "I'm feeling a bit __ today, so I'll stay home from school.", correctWord: "under the weather" },
-                    { id: 8, idiom: "Cut a long story short", emoji: "✂️", meaning: "To tell the main points and omit unnecessary details.", example: "To __, we missed the last train and had to walk home.", correctWord: "cut a long story short" },
-                    { id: 9, idiom: "See eye to eye", emoji: "👀", meaning: "To agree completely with someone.", example: "Luckily, my study partner and I __ on how to plan our project.", correctWord: "see eye to eye" },
-                    { id: 10, idiom: "Back to the drawing board", emoji: "✏️", meaning: "To start over after a plan or idea has failed.", example: "The experiment failed, so it's __ for our science group.", correctWord: "back to the drawing board" },
-                    { id: 11, idiom: "The ball is in your court", emoji: "🏀", meaning: "It is up to you to make the next decision or step.", example: "I've given you my advice; now __ to decide.", correctWord: "the ball is in your court" },
-                    { id: 12, idiom: "Cost an arm and a leg", emoji: "💰", meaning: "To be very expensive.", example: "Those new headphones must __!", correctWord: "cost an arm and a leg" },
-                    { id: 13, idiom: "Go the extra mile", emoji: "🥇", meaning: "To make a special effort to achieve something.", example: "She always __ to help her younger sister with homework.", correctWord: "goes the extra mile" },
-                    { id: 14, idiom: "Hit the nail on the head", emoji: "📌", meaning: "To describe exactly what is causing a situation or problem.", example: "That's right, you __! I completely forgot about the deadline.", correctWord: "hit the nail on the head" },
-                    { id: 15, idiom: "Bite the bullet", emoji: "😬", meaning: "To face a difficult or unpleasant situation with courage.", example: "I don't want to tell my parents, but I have to __ and admit I lost the book.", correctWord: "bite the bullet" },
-                    { id: 16, idiom: "Burn the midnight oil", emoji: "📚", meaning: "To stay up late working or studying.", example: "We had to __ last night to finish the history presentation.", correctWord: "burn the midnight oil" },
-                    { id: 17, idiom: "Call it a day", emoji: "⏸️", meaning: "To stop working on something; to finish for the day.", example: "It's getting late. Let's __ and finish this tomorrow morning.", correctWord: "call it a day" },
-                    { id: 18, idiom: "Hang in there", emoji: "💪", meaning: "Don't give up; persist (often used as encouragement).", example: "The training is tough, but __! You'll be great.", correctWord: "hang in there" },
-                    { id: 19, idiom: "A blessing in disguise", emoji: "🎁", meaning: "Something that seems bad or unlucky at first but results in something good later on.", example: "Missing the early bus was __ because I got a better seat on the next one.", correctWord: "a blessing in disguise" },
-                    { id: 20, idiom: "Keep an eye on", emoji: "👂", meaning: "To watch or look after carefully.", example: "Can you __ my bag while I quickly get a drink?", correctWord: "keep an eye on" },
-                    { id: 21, idiom: "Miss the boat", emoji: "🚢", meaning: "To miss an opportunity.", example: "The deadline for applications passed yesterday; I totally __.", correctWord: "missed the boat" },
-                    { id: 22, idiom: "Get your act together", emoji: "🛑", meaning: "To organize oneself and behave more effectively.", example: "You need to __ if you want to pass the final exams.", correctWord: "get your act together" },
-                    { id: 23, idiom: "Give it a shot", emoji: "👍", meaning: "To try something.", example: "I'm not sure if I can do it, but I'll __ anyway!", correctWord: "give it a shot" },
-                    { id: 24, idiom: "Think outside the box", emoji: "💡", meaning: "To think creatively and unconventionally.", example: "For this project, we need to __ to come up with a truly unique idea.", correctWord: "think outside the box" },
-                    { id: 25, idiom: "Once in a blue moon", emoji: "🌙", meaning: "Very rarely.", example: "I only watch a movie with my parents __, so it's a special treat.", correctWord: "once in a blue moon" },
-                    { id: 26, idiom: "Hit the sack", emoji: "😴", meaning: "To go to bed.", example: "I'm exhausted after that long trip, I need to __.", correctWord: "hit the sack" },
-                    { id: 27, idiom: "The whole nine yards", emoji: "🎯", meaning: "Everything; all of it.", example: "For his birthday party, we got him a cake, presents, and balloons – __.", correctWord: "the whole nine yards" },
-                    { id: 28, idiom: "On the same page", emoji: "🤝", meaning: "To be in agreement about something.", example: "Let's quickly review the plan to make sure we're all __.", correctWord: "on the same page" },
-                    { id: 29, idiom: "Couch potato", emoji: "🛋️", meaning: "A very lazy person who spends a lot of time watching TV.", example: "Don't be such a __ this weekend; let's go outside!", correctWord: "couch potato" },
-                    { id: 30, idiom: "Wrap my head around", emoji: "🧠", meaning: "To understand something complicated or strange.", example: "I'm finding it hard to __ the physics concepts we learned today.", correctWord: "wrap my head around" },
-                    { id: 31, idiom: "Read between the lines", emoji: "📘", meaning: "To understand the hidden or implied meaning.", example: "She said she was 'fine', but if you __, you can tell she's upset.", correctWord: "read between the lines" },
-                    { id: 32, idiom: "The icing on the cake", emoji: "👑", meaning: "An extra benefit or positive element that makes a good situation even better.", example: "Getting the job offer was great, but the big salary increase was __.", correctWord: "the icing on the cake" },
-                    { id: 33, idiom: "When pigs fly", emoji: "🐷", meaning: "Something that will never happen.", example: "He'll apologize for what he did __!", correctWord: "when pigs fly" },
-                    { id: 34, idiom: "Skating on thin ice", emoji: "🥶", meaning: "To be in a risky situation.", example: "If you keep skipping classes, you'll be __ with the principal.", correctWord: "skating on thin ice" },
-                    { id: 35, idiom: "A drop in the ocean", emoji: "💧", meaning: "A tiny amount compared to what is needed.", example: "The money we raised is just __ compared to the total needed for the project.", correctWord: "a drop in the ocean" },
-                    { id: 36, idiom: "The apple of my eye", emoji: "🍎", meaning: "A person who is cherished above all others.", example: "My younger cousin is absolutely __.", correctWord: "the apple of my eye" },
-                    { id: 37, idiom: "Catch up", emoji: "🎉", meaning: "To meet someone after a period of time to share news.", example: "I haven't seen you in ages! We must __ soon.", correctWord: "catch up" },
-                    { id: 38, idiom: "Lend a hand", emoji: "🤝", meaning: "Help with something or assist someone.", example: "Can you __ with setting up the decorations for the party?", correctWord: "lend a hand" },
-                    { id: 39, idiom: "Hold your horses", emoji: "🐴", meaning: "Wait a moment or slow down.", example: "Just __ for a minute, I need to check the exact time of the meeting.", correctWord: "hold your horses" },
-                    { id: 40, idiom: "A dime a dozen", emoji: "🪙", meaning: "Very common and easily found.", example: "Good study guides are __ online, so don't pay too much for one.", correctWord: "a dime a dozen" },
-                    { id: 41, idiom: "All ears", emoji: "👂", meaning: "Eager and ready to listen.", example: "Tell me about your trip—I'm __!", correctWord: "all ears" },
-                    { id: 42, idiom: "Put all your eggs in one basket", emoji: "🥚", meaning: "To risk everything on one venture.", example: "It's better to apply to a few universities and not __.", correctWord: "put all your eggs in one basket" },
-                    { id: 43, idiom: "Jump on the bandwagon", emoji: "🚌", meaning: "To join an activity or trend that has become popular.", example: "Everyone started wearing those shoes, so I decided to __ too.", correctWord: "jump on the bandwagon" },
-                    { id: 44, idiom: "To make matters worse", emoji: "📉", meaning: "To make a bad situation even more difficult or unpleasant.", example: "First, I missed the bus, and then, __, it started raining heavily.", correctWord: "to make matters worse" },
-                    { id: 45, idiom: "Give the benefit of the doubt", emoji: "❓", meaning: "To accept someone's statement or excuse as true, without proof.", example: "I'll __ and assume she just forgot to reply to the email.", correctWord: "give her the benefit of the doubt" },
-                    { id: 46, idiom: "Head over heels", emoji: "🤸", meaning: "Madly in love or extremely enthusiastic about something.", example: "I am __ about the new concert venue; it looks amazing!", correctWord: "head over heels" },
-                    { id: 47, idiom: "Through thick and thin", emoji: "🛡️", meaning: "Supporting someone unconditionally, especially during difficult times.", example: "Thanks for always sticking by me __; you're a great friend.", correctWord: "through thick and thin" },
-                    { id: 48, idiom: "Take it easy", emoji: "🛀", meaning: "Relax; calm down.", example: "I'm going to __ this weekend after the exams.", correctWord: "take it easy" },
-                    { id: 49, idiom: "Get over it", emoji: "🤸", meaning: "Recover from something upsetting.", example: "He was sad about the loss, but he needs to __ now.", correctWord: "get over it" },
-                    { id: 50, idiom: "Ring a bell", emoji: "🔔", meaning: "Sound familiar.", example: "That name doesn't __; I've never heard of him.", correctWord: "ring a bell" },
-                    { id: 51, idiom: "Sleep on it", emoji: "😴", meaning: "Delay making a decision until the next day.", example: "It's a big choice, so why don't you __?", correctWord: "sleep on it" },
-                    { id: 52, idiom: "On the dot", emoji: "🕛", meaning: "Exactly on time.", example: "Make sure you arrive at 12:00 __.", correctWord: "on the dot" },
-                    { id: 53, idiom: "Easy come, easy go", emoji: "🌬️", meaning: "Something acquired without effort is also easily lost.", example: "I lost the money I won, but hey, __.", correctWord: "easy come, easy go" },
-                    { id: 54, idiom: "Get cold feet", emoji: "🧊", meaning: "Become nervous or hesitant about something.", example: "He was planning to perform, but he __ at the last minute.", correctWord: "got cold feet" },
-                    { id: 55, idiom: "Make ends meet", emoji: "💵", meaning: "Earn just enough money to live on.", example: "It's hard to __ with prices rising so fast.", correctWord: "make ends meet" },
-                    { id: 56, idiom: "Once bitten, twice shy", emoji: "🐍", meaning: "After a bad experience, one is careful to avoid similar situations.", example: "I won't trust that website again; __.", correctWord: "once bitten, twice shy" },
-                    { id: 57, idiom: "Keep your head above water", emoji: "🏊", meaning: "Managing to cope with a difficult situation, especially financial.", example: "I'm working two jobs just to __.", correctWord: "keep my head above water" },
-                    { id: 58, idiom: "A storm in a teacup", emoji: "☕", meaning: "A lot of fuss about something unimportant.", example: "The argument over the seating plan was just __.", correctWord: "a storm in a teacup" },
-                    { id: 59, idiom: "In a nutshell", emoji: "🌰", meaning: "Summarized briefly.", example: "To put the complicated theory __, it was a disaster.", correctWord: "in a nutshell" },
-                    { id: 60, idiom: "The last straw", emoji: "🌾", meaning: "The final irritation that causes someone to lose patience.", example: "When she was late again, that was __.", correctWord: "the last straw" },
-                    { id: 61, idiom: "Pass with flying colours", emoji: "🌈", meaning: "Pass an exam or test easily and with high marks.", example: "I studied hard and managed to __.", correctWord: "pass with flying colours" },
-                    { id: 62, idiom: "Get the hang of", emoji: "👌", meaning: "Learn how to do something, especially something new.", example: "It took me a week, but now I'm starting to __ playing the guitar.", correctWord: "get the hang of" },
-                    { id: 63, idiom: "The bottom line", emoji: "📝", meaning: "The most important factor or result.", example: "__ is that we need to finish this report by Friday.", correctWord: "The bottom line" },
-                    { id: 64, idiom: "Turn a blind eye", emoji: "🙈", meaning: "To pretend not to notice something bad or illegal.", example: "The teacher chose to __ to the small whispering.", correctWord: "turn a blind eye" },
-                    { id: 65, idiom: "Get the ball rolling", emoji: "⚽", meaning: "To start an activity or process.", example: "Let's __ and start planning our next holiday.", correctWord: "get the ball rolling" },
-                    { id: 66, idiom: "By the skin of one's teeth", emoji: "🦷", meaning: "Just barely succeeding in doing something.", example: "I passed the driving test only __.", correctWord: "by the skin of one's teeth" },
-                    { id: 67, idiom: "Give someone the cold shoulder", emoji: "🥶", meaning: "To intentionally ignore someone.", example: "I tried to talk to her, but she just __.", correctWord: "gave me the cold shoulder" },
-                    { id: 68, idiom: "No pain, no gain", emoji: "💪", meaning: "Suffering is necessary to achieve success.", example: "You must practice every day; __!", correctWord: "no pain, no gain" },
-                    { id: 69, idiom: "Jump the gun", emoji: "🏃", meaning: "To start doing something too soon or prematurely.", example: "We should wait for the official announcement and not __.", correctWord: "jump the gun" },
-                    { id: 70, idiom: "Keep a straight face", emoji: "😐", meaning: "To manage to look serious and avoid laughing.", example: "It was so funny, I couldn't __ during the presentation.", correctWord: "keep a straight face" },
-                    { id: 71, idiom: "Let sleeping dogs lie", emoji: "🐕", meaning: "To avoid bringing up a past problem or argument.", example: "Don't ask him about his old job; it's better to __.", correctWord: "let sleeping dogs lie" },
-                    { id: 72, idiom: "Take the plunge", emoji: "💧", meaning: "To finally commit to a risky or serious undertaking.", example: "After months of planning, I decided to __ and start my own club.", correctWord: "take the plunge" },
-                    { id: 73, idiom: "Hit the books", emoji: "📖", meaning: "To study hard, usually for a test or exam.", example: "I need to __ tonight if I want to pass the maths test.", correctWord: "hit the books" },
-                    { id: 74, idiom: "Run out of steam", emoji: "💨", meaning: "To lose momentum or energy.", example: "He started the marathon strong but quickly __ halfway through.", correctWord: "ran out of steam" },
-                    { id: 75, idiom: "Put your feet up", emoji: "🏖️", meaning: "To relax, take a break.", example: "I'm looking forward to getting home and __ for the evening.", correctWord: "putting my feet up" },
-                    { id: 76, idiom: "Get something out of your system", emoji: "🌬️", meaning: "To do something you've wanted to do so you can move on.", example: "You should take that holiday to __ before you start university.", correctWord: "get it out of your system" },
-                    { id: 77, idiom: "Two sides of the same coin", emoji: "🪙", meaning: "Two different aspects of the same situation.", example: "Their honesty and bluntness are just __.", correctWord: "two sides of the same coin" },
-                    { id: 78, idiom: "Break a leg", emoji: "🤞", meaning: "Good luck (used especially to wish success to a performer).", example: "Tell him to __ before he goes on stage!", correctWord: "break a leg" },
-                    { id: 79, idiom: "Against the clock", emoji: "⏱️", meaning: "Rushing to meet a tight deadline.", example: "We worked __ to get the newspaper printed before morning.", correctWord: "against the clock" },
-                    { id: 80, idiom: "Get down to brass tacks", emoji: "🛠️", meaning: "Start discussing the essential, fundamental details.", example: "Enough small talk, let's __ and discuss the budget.", correctWord: "get down to brass tacks" },
-                    { id: 81, idiom: "Add insult to injury", emoji: "🩹", meaning: "To make a bad situation worse.", example: "Not only did they lose the match, but to __, they had to pay a fine.", correctWord: "add insult to injury" },
-                    { id: 82, idiom: "Pull yourself together", emoji: "🧘", meaning: "Recover control of one's emotions.", example: "You need to __ and focus on the presentation.", correctWord: "pull yourself together" },
-                    { id: 83, idiom: "Take a deep breath", emoji: "😮‍💨", meaning: "Pause to calm down before continuing.", example: "Just __ and start your speech when you feel ready.", correctWord: "take a deep breath" },
-                    { id: 84, idiom: "Come hell or high water", emoji: "🌊", meaning: "No matter what difficulties arise.", example: "We will finish this project by the deadline, __.", correctWord: "come hell or high water" },
-                    { id: 85, idiom: "Give and take", emoji: "🤲", meaning: "Compromise between opposing positions.", example: "A good friendship requires a lot of __.", correctWord: "give and take" },
-                    { id: 86, idiom: "Keep your shirt on", emoji: "👚", meaning: "Remain calm; don't get angry.", example: "__, I'll be there in five minutes!", correctWord: "Keep your shirt on" },
-                    { id: 87, idiom: "Up in the air", emoji: "🪁", meaning: "Uncertain or undecided.", example: "Our travel plans for next summer are still __.", correctWord: "up in the air" },
-                    { id: 88, idiom: "Spill the beans", emoji: "🍲", meaning: "Reveal a secret.", example: "Come on, don't keep me waiting—__ about your new job!", correctWord: "spill the beans" },
-                    { id: 89, idiom: "Be on cloud nine", emoji: "☁️", meaning: "Be extremely happy.", example: "She has been __ since she got into her dream university.", correctWord: "on cloud nine" },
-                    { id: 90, idiom: "Walk on air", emoji: "🎈", meaning: "Be extremely happy or excited.", example: "He was practically __ after his successful performance.", correctWord: "walking on air" },
-                    { id: 91, idiom: "A red letter day", emoji: "📅", meaning: "A significant, memorable, or joyful day.", example: "My graduation day was truly __ for my whole family.", correctWord: "a red letter day" },
-                    { id: 92, idiom: "To each their own", emoji: "🤷", meaning: "Everyone has their own preferences.", example: "I wouldn't choose that colour, but __.", correctWord: "to each their own" },
-                    { id: 93, idiom: "Better safe than sorry", emoji: "⛑️", meaning: "It is better to take precautions than to regret the consequences.", example: "Put on sunscreen, just to be on the safe side—__.", correctWord: "better safe than sorry" },
-                    { id: 94, idiom: "Time flies", emoji: "⏳", meaning: "Time passes quickly.", example: "I can't believe the holidays are over already; __!", correctWord: "time flies" },
-                    
-                    // --- 6 NEW IDIOMS TO MAKE 100 (IDs 95-100) ---
-                    { id: 95, idiom: "Get a kick out of", emoji: "💥", meaning: "To enjoy doing something very much.", example: "I really __ watching old cartoons.", correctWord: "get a kick out of" },
-                    { id: 96, idiom: "Take five", emoji: "⏸️", meaning: "To take a short break.", example: "We've been studying for two hours, let's __.", correctWord: "take five" },
-                    { id: 97, idiom: "Get the picture", emoji: "🖼️", meaning: "To understand the situation.", example: "I explained it slowly so she could __.", correctWord: "get the picture" },
-                    { id: 98, idiom: "Speak your mind", emoji: "💬", meaning: "To say exactly what you think.", example: "She's not afraid to __ even if others disagree.", correctWord: "speak her mind" },
-                    { id: 99, idiom: "Hit the jackpot", emoji: "🎰", meaning: "To have sudden great success, especially financially.", example: "Finding that antique at the market meant I __!", correctWord: "hit the jackpot" },
-                    { id: 100, idiom: "The best of both worlds", emoji: "🌍", meaning: "A situation where you can enjoy the advantages of two very different things.", example: "Working remotely lets me have __.", correctWord: "the best of both worlds" }
-                ];
-
-                let quizQuestions = [];
-                const QUIZ_SIZE = 20;
-                let currentQuestionIndex = 0;
-                let score = 0;
-
-                function createFilename(idiomId) {
-                    // FIX: Return the zero-padded ID number followed by .mp3
-                    const idString = idiomId.toString().padStart(2, '0');
-                    return `${idString}.mp3`;
-                }
-                
-                // --- AUDIO FEEDBACK FUNCTIONS ---
-                function playCorrectSound() {
-                    // Requires correct.mp3 in the same folder
-                    const audio = new Audio('correct.mp3');
-                    audio.play().catch(e => console.warn("Could not play correct.mp3:", e));
-                }
-
-                function playWrongSound() {
-                    // Requires wrong.mp3 in the same folder
-                    const audio = new Audio('wrong.mp3');
-                    audio.play().catch(e => console.warn("Could not play wrong.mp3:", e));
-                }
-
-                function playAudio(idiomId, idiom) {
-                    // This function is now called with the ID number
-                    const filename = createFilename(idiomId);
-                    console.log(`Attempting to play audio for ID ${idiomId} ("${idiom}"). File: ${filename}`);
-                    
-                    // Centralized audio stop logic
-                    if (currentAudio && !currentAudio.paused) {
-                        currentAudio.pause();
-                        currentAudio.currentTime = 0;
-                    }
-                    
-                    const newAudio = new Audio(filename);
-                    currentAudio = newAudio;
-
-                    newAudio.play().catch(e => {
-                        console.error(`Error playing audio for ${idiom} (file: ${filename}). Ensure the file exists and is correctly named.`, e);
-                        currentAudio = null; 
-                    });
-                }
-                // --- END AUDIO FUNCTIONS ---
-
-                function shuffleArray(array) {
-                    for (let i = array.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [array[i], array[j]] = [array[j], array[i]];
-                    }
-                    return array;
-                }
-
-                function generateQuizQuestion(idiomData, allData) {
-                    const allOthers = allData.filter(d => d.id !== idiomData.id);
-                    const shuffledOthers = shuffleArray([...allOthers]);
-                    const distractors = shuffledOthers.slice(0, 2);
-
-                    let question = {};
-                    question.correctId = idiomData.id;
-                    
-                    const questionType = Math.random() < 0.5 ? 'meaning' : 'sentence';
-
-                    if (questionType === 'meaning') {
-                        question.type = 'Meaning';
-                        question.text = `What is the meaning of the idiom: "<span class="idiom-title">${idiomData.idiom}</span>"?`;
-                        question.correctAnswer = idiomData.meaning;
-                        question.choices = shuffleArray([
-                            { text: idiomData.meaning, correct: true },
-                            { text: distractors[0].meaning, correct: false },
-                            { text: distractors[1].meaning, correct: false }
-                        ]);
-                    } else { // Sentence completion (choose the correct idiom)
-                        question.type = 'Completion';
-                        
-                        // Prepare sentence for display with placeholder
-                        const placeholderExample = idiomData.example.replace(new RegExp(`\\b${idiomData.correctWord.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")}\\b`, 'i'), '____');
-                        
-                        question.text = `Complete the sentence with the correct idiom: "${placeholderExample}"`;
-                        question.correctAnswer = idiomData.idiom;
-                        
-                        question.choices = shuffleArray([
-                            { text: idiomData.idiom, correct: true },
-                            { text: distractors[0].idiom, correct: false },
-                            { text: distractors[1].idiom, correct: false }
-                        ]);
-                    }
-                    return question;
-                }
-
-                // --- FUNCTION TO RENDER LIST ON PAGE LOAD & FILTERING ---
-                function filterIdioms() {
-                    const searchTerm = document.getElementById('idiom-search').value.toLowerCase();
-                    
-                    const filteredData = ALL_IDIOMS_DATA.filter(d => {
-                        return (
-                            d.idiom.toLowerCase().includes(searchTerm) ||
-                            d.meaning.toLowerCase().includes(searchTerm) ||
-                            d.example.toLowerCase().includes(searchTerm)
-                        );
-                    });
-
-                    renderIdiomList(filteredData);
-                }
-
-
-                function renderIdiomList(dataToRender = ALL_IDIOMS_DATA) {
-                    const idiomListContainer = document.getElementById('idiom-list-content');
-                    if (!idiomListContainer) return; // Safety check
-                    
-                    const listHTML = dataToRender.map((d, index) => {
-                        // Cycle through themes
-                        const themeClass = CARD_THEMES[index % CARD_THEMES.length];
-                        
-                        // Replace the placeholder '__' with the correctly formatted idiom (using example-highlight class)
-                        const highlightedExample = d.example.replace('__', `<strong class="example-highlight">${d.correctWord}</strong>`);
-                        
-                        return `
-                            <div class="p-4 rounded-xl idiom-card ${themeClass}">
-                                <div class="flex items-center mb-1">
-                                    <span class="text-xl idiom-id mr-2">${d.id}.</span>
-                                    <strong class="text-xl idiom-title">${d.idiom}</strong>
-                                    <span class="text-2xl ml-2">${d.emoji}</span>
-                                    <button class="speaker-btn text-3xl" onclick="playAudio(${d.id}, '${d.idiom}')" aria-label="Play audio for ${d.idiom}">
-                                        &#128266;
-                                    </button>
-                                </div>
-                                <p class="idiom-meaning mb-2">${d.meaning}</p>
-                                <p class="handwriting">${highlightedExample}</p>
-                            </div>
-                        `;
-                    }).join('');
-
-                    if (dataToRender.length === 0) {
-                        idiomListContainer.innerHTML = '<p class="text-center text-red-500 col-span-full mt-10">No idioms matched your search criteria.</p>';
-                    } else {
-                        idiomListContainer.innerHTML = listHTML;
-                    }
-                }
-                // --- END LIST RENDER FUNCTION ---
-
-
-                function startQuiz() {
-                    // 1. Hide list and show quiz area
-                    document.getElementById('idiom-list').classList.add('hidden');
-                    document.getElementById('start-quiz-btn-container').classList.add('hidden');
-                    document.getElementById('quiz-container').classList.remove('hidden');
-                    document.getElementById('quiz-results').classList.add('hidden');
-                    document.getElementById('quiz-area').classList.remove('hidden');
-
-                    // 2. Reset state
-                    currentQuestionIndex = 0;
-                    score = 0;
-                    quizQuestions = [];
-
-                    // 3. Select 20 random idioms
-                    const randomIdioms = shuffleArray([...ALL_IDIOMS_DATA]).slice(0, QUIZ_SIZE);
-
-                    // 4. Generate questions
-                    randomIdioms.forEach(idiom => {
-                        quizQuestions.push(generateQuizQuestion(idiom, ALL_IDIOMS_DATA));
-                    });
-                    
-                    renderQuestion();
-                }
-
-                function renderQuestion() {
-                    if (currentQuestionIndex >= QUIZ_SIZE) {
-                        showResults();
-                        return;
-                    }
-
-                    const q = quizQuestions[currentQuestionIndex];
-                    const quizArea = document.getElementById('quiz-area');
-                    quizArea.innerHTML = `
-                        <div class="p-6 bg-white rounded-lg shadow-xl border border-blue-300">
-                            <p class="text-lg font-semibold text-gray-700 mb-2">
-                                Question ${currentQuestionIndex + 1} of ${QUIZ_SIZE}
-                            </p>
-                            <div class="text-xl font-bold mb-6 text-blue-800">
-                                ${q.text}
-                            </div>
-                            <form id="quiz-form" onsubmit="event.preventDefault(); checkAnswer();">
-                                <div class="space-y-4">
-                                    ${q.choices.map((choice, index) => `
-                                        <label id="choice-${index}" data-correct="${choice.correct}" class="quiz-option block cursor-pointer p-4 bg-gray-50 rounded-lg border border-gray-300 transition duration-150">
-                                            <input type="radio" name="answer" value="${choice.text}" class="mr-3 text-blue-600 focus:ring-blue-500">
-                                            <span class="font-medium text-gray-800">${choice.text}</span>
-                                        </label>
-                                    `).join('')}
-                                </div>
-                                <button type="submit" id="submit-btn" class="w-full mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-200">
-                                    Submit Answer
-                                </button>
-                                <button type="button" onclick="showIdiomList()" class="w-full mt-3 px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition duration-200">
-                                    Leave the Test
-                                </button>
-                            </form>
-                        </div>
-                    `;
-                }
-
-                function displayFeedback(isCorrect, selectedElement, correctElement) {
-                    const submitBtn = document.getElementById('submit-btn');
-                    const form = document.getElementById('quiz-form');
-                    
-                    // Disable form elements
-                    submitBtn.disabled = true;
-                    form.querySelectorAll('input[type="radio"]').forEach(radio => radio.disabled = true);
-                    
-                    // Highlight selected/correct answers
-                    if (isCorrect) {
-                        selectedElement.classList.add('correct-answer');
-                        playCorrectSound();
-                    } else {
-                        selectedElement.classList.add('incorrect-answer');
-                        // Show the correct answer
-                        correctElement.classList.add('correct-answer');
-                        playWrongSound();
-                    }
-
-                    // Move to the next question after a delay
-                    setTimeout(() => {
-                        currentQuestionIndex++;
-                        renderQuestion();
-                    }, FEEDBACK_DELAY_MS);
-                }
-
-                function checkAnswer() {
-                    const form = document.getElementById('quiz-form');
-                    const selectedInput = form.querySelector('input[name="answer"]:checked');
-                    
-                    if (!selectedInput) {
-                        alert("Please select an answer before submitting.");
-                        return;
-                    }
-                    
-                    const selectedElement = selectedInput.closest('.quiz-option');
-                    const userAnswer = selectedInput.value;
-                    
-                    // Find the correct choice text
-                    const q = quizQuestions[currentQuestionIndex];
-                    const correctAnswerText = q.choices.find(c => c.correct).text;
-                    
-                    // Find the HTML element corresponding to the correct answer
-                    let correctElement = null;
-                    form.querySelectorAll('.quiz-option').forEach(element => {
-                        if (element.querySelector('span').textContent === correctAnswerText) {
-                            correctElement = element;
-                        }
-                    });
-
-                    const isCorrect = (userAnswer === correctAnswerText);
-
-                    // Increment score if correct
-                    if (isCorrect) {
-                        score++;
-                    }
-
-                    // Display visual feedback and pause before advancing
-                    displayFeedback(isCorrect, selectedElement, correctElement);
-                }
-
-                function showResults() {
-                    document.getElementById('quiz-area').classList.add('hidden');
-                    const resultsDiv = document.getElementById('quiz-results');
-                    resultsDiv.classList.remove('hidden');
-
-                    resultsDiv.innerHTML = `
-                        <div class="p-8 bg-green-50 rounded-xl shadow-2xl text-center">
-                            <h2 class="text-3xl main-title text-green-700 mb-4">Quiz Complete!</h2>
-                            <p class="text-4xl font-extrabold text-green-800 mb-6">
-                                Your Score: ${score}/${QUIZ_SIZE}
-                            </p>
-                            <p class="text-lg text-gray-700 mb-8">
-                                That's a strong effort! Review the idioms you missed to strengthen your IGCSE vocabulary.
-                            </p>
-                            <button onclick="startQuiz()" class="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition duration-200 mr-4">
-                                Try Again
-                            </button>
-                            <button onclick="showIdiomList()" class="px-6 py-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition duration-200">
-                                Back to Idioms List
-                            </button>
-                        </div>
-                    `;
-                }
-                
-                function showIdiomList() {
-                    document.getElementById('quiz-container').classList.add('hidden');
-                    document.getElementById('idiom-list').classList.remove('hidden');
-                    document.getElementById('start-quiz-btn-container').classList.remove('hidden');
-                }
-            </script>
-
-            <!-- Idioms List Section -->
-            <div id="idiom-list">
-                <div id="idiom-list-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <!-- Idiom cards will be injected here by renderIdiomList() on load -->
-                    <p class="text-center text-gray-500 col-span-full">Loading idioms...</p>
-                </div>
+            <!-- VIEW 1: GRID LIST VIEW -->
+            <div id="view-list" class="print-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dynamically populated cards will go here -->
             </div>
 
-            <!-- Quiz Container (Hidden by default) -->
-            <div id="quiz-container" class="mt-10 hidden">
-                <div id="quiz-area">
-                    <!-- Questions rendered here -->
+            <!-- VIEW 2: INTERACTIVE 3D FLASHCARDS -->
+            <div id="view-flashcard" class="hidden py-8 max-w-xl mx-auto no-print">
+                <!-- Mode Options & Switchers -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                        <span>🗂️</span> Active Deck Mode
+                    </h3>
+                    <select id="flashcard-pool-selector" onchange="initFlashcardSession()" class="text-xs bg-slate-100 dark:bg-slate-800 border-none rounded-lg p-2 font-bold focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Full Deck (All 100 Idioms)</option>
+                        <option value="favorites">Bookmarked Only</option>
+                    </select>
                 </div>
-                <div id="quiz-results" class="hidden">
-                    <!-- Results rendered here -->
+
+                <!-- 3D Card Engine Frame -->
+                <div class="perspective-1000 w-full h-[320px] cursor-pointer" onclick="flipActiveCard()">
+                    <div id="flashcard-3d-object" class="relative w-full h-full transform-style-3d duration-700 ease-out">
+                        
+                        <!-- FRONT SIDE -->
+                        <div class="absolute inset-0 backface-hidden bg-gradient-to-tr from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-8 flex flex-col justify-between shadow-xl">
+                            <div class="flex justify-between items-start">
+                                <span class="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold font-inter" id="fc-front-id">Idiom #01</span>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="event.stopPropagation(); playFlashcardAudio()" class="p-2 text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-110 transition duration-150 text-xl" title="Listen Audio">🔊</button>
+                                    <button onclick="event.stopPropagation(); toggleFlashcardFavorite()" id="fc-front-star-btn" class="p-2 text-slate-300 hover:scale-110 transition duration-150 text-xl" title="Add to Bookmarks">★</button>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center my-auto px-4">
+                                <span class="text-5xl block mb-4" id="fc-front-emoji">😊</span>
+                                <h2 class="text-2xl md:text-3xl font-inter font-black text-blue-900 dark:text-blue-300 tracking-tight" id="fc-front-title">Over the moon</h2>
+                            </div>
+
+                            <p class="text-center text-xs text-slate-400 uppercase tracking-widest font-extrabold animate-pulse">Tap or press SPACE to reveal meaning</p>
+                        </div>
+
+                        <!-- BACK SIDE -->
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-tr from-indigo-50 to-emerald-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-emerald-950 rounded-2xl p-8 flex flex-col justify-between shadow-xl">
+                            <div class="flex justify-between items-start">
+                                <span class="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-bold" id="fc-back-id">Meaning & Example</span>
+                                <span class="text-2xl" id="fc-back-emoji">😊</span>
+                            </div>
+
+                            <div class="my-auto space-y-4">
+                                <div class="text-center">
+                                    <span class="text-xs uppercase text-emerald-600 dark:text-emerald-400 font-extrabold tracking-widest block mb-1">Definition</span>
+                                    <p class="text-lg font-extrabold text-emerald-900 dark:text-emerald-300 font-sans" id="fc-back-meaning">Extremely happy and delighted.</p>
+                                </div>
+                                <div class="border-t border-slate-200 dark:border-slate-700/60 pt-3 text-center">
+                                    <span class="text-xs uppercase text-amber-600 dark:text-amber-400 font-extrabold tracking-widest block mb-1">Exam Context Example</span>
+                                    <p class="handwriting text-slate-800 dark:text-slate-100 text-lg" id="fc-back-example">I was <strong class="text-red-500">over the moon</strong> when I heard I got the concert tickets!</p>
+                                </div>
+                            </div>
+
+                            <p class="text-center text-xs text-slate-400 uppercase tracking-widest font-extrabold">Tap again to flip back</p>
+                        </div>
+
+                    </div>
                 </div>
+
+                <!-- Deck Controllers -->
+                <div class="flex items-center justify-between mt-8 gap-4">
+                    <button onclick="stepFlashcard(-1)" class="flex items-center gap-1.5 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-bold text-sm transition">
+                        ◀ Previous
+                    </button>
+                    <span class="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest" id="fc-progress-counter">Card 1 of 100</span>
+                    <button onclick="stepFlashcard(1)" class="flex items-center gap-1.5 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-bold text-sm transition">
+                        Next ▶
+                    </button>
+                </div>
+
+                <!-- Secondary Deck Actions -->
+                <div class="flex items-center justify-center mt-4 gap-3">
+                    <button onclick="shuffleFlashcards()" class="px-4 py-2 text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg transition flex items-center gap-1.5">
+                        🔀 Shuffle Deck
+                    </button>
+                    <button onclick="resetFlashcardsOrder()" class="px-4 py-2 text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 font-bold rounded-lg transition">
+                        🔢 Reset Order (1-100)
+                    </button>
+                </div>
+
+                <!-- Desktop Hotkeys Info -->
+                <p class="text-center text-[10px] text-slate-400 dark:text-slate-500 mt-6 hidden sm:block">
+                    Keyboard Shortcuts: <strong>Spacebar</strong> (Flip) &nbsp;|&nbsp; <strong>Arrow Keys ← →</strong> (Navigate)
+                </p>
             </div>
 
-            <!-- Footer Content (Used for spacing/alignment only in this structure) -->
-            <footer class="text-center mt-10 pt-4 border-t-2 border-gray-200">
-                <p class="text-gray-500 text-sm">Review these idioms before starting the test!</p>
-            </footer>
+            <!-- VIEW 3: PRACTICE EXAM TEST -->
+            <div id="view-quiz" class="hidden no-print">
+                <div id="quiz-intro-screen" class="max-w-xl mx-auto py-8 text-center space-y-6">
+                    <span class="text-5xl block animate-bounce">🎓</span>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-slate-100 font-inter">Interactive Syllabus Assessment</h2>
+                    <p class="text-slate-600 dark:text-slate-400 max-w-md mx-auto text-sm leading-relaxed">
+                        Test your idiomatic command! This module compiles <strong>20 randomly generated questions</strong> with structured meaning matching and mock exam-style contextual completions.
+                    </p>
+                    
+                    <div class="bg-indigo-50 dark:bg-slate-800/50 rounded-xl p-4 border border-indigo-100 dark:border-slate-800 max-w-sm mx-auto text-left">
+                        <span class="text-xs uppercase font-black text-indigo-700 dark:text-indigo-400 block mb-2 tracking-widest">Test Configuration</span>
+                        <ul class="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 font-bold">
+                            <li>📊 Format: 20 Questions (Random Selection)</li>
+                            <li>✅ Types: Definition Match & Sentence Completion</li>
+                            <li>🔊 Sounds: Real-time validation cues</li>
+                            <li>⏱️ Duration: Take your own time</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                        <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-md transition duration-200 shadow-md">
+                            Begin Quiz
+                        </button>
+                        <button onclick="setViewMode('list')" class="w-full sm:w-auto px-6 py-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-sm transition">
+                            Back to Reference Sheet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LIVE QUIZ ENGINE WINDOW -->
+                <div id="quiz-live-window" class="hidden max-w-xl mx-auto py-4">
+                    <!-- Progress Header -->
+                    <div class="mb-6 space-y-2">
+                        <div class="flex justify-between items-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            <span id="quiz-q-counter">Question 1 of 20</span>
+                            <span id="quiz-score-tracker" class="text-emerald-600 dark:text-emerald-400">Score: 0/20</span>
+                        </div>
+                        <!-- Sleek Custom Progress Bar -->
+                        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 w-[5%]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Container -->
+                    <div id="quiz-question-box">
+                        <!-- Instantiated by JS Engine -->
+                    </div>
+                </div>
+
+                <!-- POST-QUIZ ANALYTICS / RESULTS -->
+                <div id="quiz-results-window" class="hidden max-w-md mx-auto py-8 text-center space-y-6">
+                    <span id="quiz-results-emoji" class="text-6xl block">🏆</span>
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-slate-100">Test Complete!</h2>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-inner">
+                        <span class="text-xs uppercase font-black text-slate-500 tracking-wider block mb-1">Your Certified Score</span>
+                        <div class="text-5xl font-black text-indigo-600 dark:text-indigo-400 mb-2" id="quiz-results-score">
+                            18/20
+                        </div>
+                        <p class="text-sm font-bold text-slate-600 dark:text-slate-400" id="quiz-results-comment">
+                            Excellent! You're ready to score high marks in your vocabulary assignments.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button onclick="startQuiz()" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl transition duration-150">
+                            Attempt New Test
+                        </button>
+                        <button onclick="setViewMode('list')" class="w-full px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition">
+                            Back to Reference Sheet
+                        </button>
+                    </div>
+                </div>
+
+            </div>
 
         </div>
     </main>
+
+    <!-- SCORE HISTORY MODAL -->
+    <div id="score-history-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 hidden no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-800 shadow-2xl relative">
+            <button onclick="closeScoreHistoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-1.5 mb-4 font-inter">
+                📊 Test Score History
+            </h3>
+            
+            <div id="score-history-list" class="space-y-2.5 max-h-[250px] overflow-y-auto pr-1">
+                <!-- Dynamically populated scores list -->
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+                <button onclick="clearScoreHistory()" class="flex-1 py-2 text-xs bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold rounded-xl transition">
+                    Clear History
+                </button>
+                <button onclick="closeScoreHistoryModal()" class="flex-1 py-2 text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold rounded-xl transition">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FOOTER LINK -->
+    <footer class="mt-12 py-8 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400 no-print transition-colors">
+        <div class="max-w-6xl mx-auto px-4 space-y-3">
+            <div class="flex justify-center items-center gap-4">
+                <a href="https://smartstudygrid.com" target="_blank" class="hover:text-blue-600 dark:hover:text-blue-400 transition font-black tracking-widest uppercase hover:underline">smartstudygrid.com</a>
+                <span class="text-slate-300 dark:text-slate-700">|</span>
+                <span class="font-extrabold">IGCSE Syllabus Revision</span>
+            </div>
+            <p class="font-semibold text-slate-400 dark:text-slate-500">
+                Created by Amanullah Khan. Master the curriculum step by step.
+            </p>
+        </div>
+    </footer>
+
+    <!-- LOGIC SYSTEM SCRIPT -->
+    <script>
+        // --- MASTER LIST OF 100 IDIOMS ---
+        const ALL_IDIOMS_DATA = [
+            { id: 1, idiom: "Over the moon", emoji: "😊", meaning: "Extremely happy and delighted.", example: "I was __ when I heard I got the concert tickets!", correctWord: "over the moon" },
+            { id: 2, idiom: "A piece of cake", emoji: "🍰", meaning: "Something very easy to do.", example: "Don't worry about the history test, it'll be __ for you.", correctWord: "a piece of cake" },
+            { id: 3, idiom: "Take a rain check", emoji: "☔", meaning: "To politely decline an invitation, but offer to do it later.", example: "I can't make it to the party tonight, but can I __ for next time?", correctWord: "take a rain check" },
+            { id: 4, idiom: "Let the cat out of the bag", emoji: "🐈", meaning: "To accidentally reveal a secret.", example: "Oops! I think I __ about your surprise party.", correctWord: "let the cat out of the bag" },
+            { id: 5, idiom: "Speak of the devil", emoji: "🗣️", meaning: "Said when the person you were just talking about unexpectedly appears.", example: "__, Jane just walked into the room!", correctWord: "Speak of the devil" },
+            { id: 6, idiom: "Every cloud has a silver lining", emoji: "☁️", meaning: "Be optimistic; difficult times will lead to better days.", example: "I know failing the exam was tough, but remember, __.", correctWord: "every cloud has a silver lining" },
+            { id: 7, idiom: "Under the weather", emoji: "🤕", meaning: "Slightly ill or unwell.", example: "I'm feeling a bit __ today, so I'll stay home from school.", correctWord: "under the weather" },
+            { id: 8, idiom: "Cut a long story short", emoji: "✂️", meaning: "To tell the main points and omit unnecessary details.", example: "To __, we missed the last train and had to walk home.", correctWord: "cut a long story short" },
+            { id: 9, idiom: "See eye to eye", emoji: "👀", meaning: "To agree completely with someone.", example: "Luckily, my study partner and I __ on how to plan our project.", correctWord: "see eye to eye" },
+            { id: 10, idiom: "Back to the drawing board", emoji: "✏️", meaning: "To start over after a plan or idea has failed.", example: "The experiment failed, so it's __ for our science group.", correctWord: "back to the drawing board" },
+            { id: 11, idiom: "The ball is in your court", emoji: "🏀", meaning: "It is up to you to make the next decision or step.", example: "I've given you my advice; now __ to decide.", correctWord: "the ball is in your court" },
+            { id: 12, idiom: "Cost an arm and a leg", emoji: "💰", meaning: "To be very expensive.", example: "Those new headphones must __!", correctWord: "cost an arm and a leg" },
+            { id: 13, idiom: "Go the extra mile", emoji: "🥇", meaning: "To make a special effort to achieve something.", example: "She always __ to help her younger sister with homework.", correctWord: "goes the extra mile" },
+            { id: 14, idiom: "Hit the nail on the head", emoji: "📌", meaning: "To describe exactly what is causing a situation or problem.", example: "That's right, you __! I completely forgot about the deadline.", correctWord: "hit the nail on the head" },
+            { id: 15, idiom: "Bite the bullet", emoji: "😬", meaning: "To face a difficult or unpleasant situation with courage.", example: "I don't want to tell my parents, but I have to __ and admit I lost the book.", correctWord: "bite the bullet" },
+            { id: 16, idiom: "Burn the midnight oil", emoji: "📚", meaning: "To stay up late working or studying.", example: "We had to __ last night to finish the history presentation.", correctWord: "burn the midnight oil" },
+            { id: 17, idiom: "Call it a day", emoji: "⏸️", meaning: "To stop working on something; to finish for the day.", example: "It's getting late. Let's __ and finish this tomorrow morning.", correctWord: "call it a day" },
+            { id: 18, idiom: "Hang in there", emoji: "💪", meaning: "Don't give up; persist (often used as encouragement).", example: "The training is tough, but __! You'll be great.", correctWord: "hang in there" },
+            { id: 19, idiom: "A blessing in disguise", emoji: "🎁", meaning: "Something that seems bad or unlucky at first but results in something good later on.", example: "Missing the early bus was __ because I got a better seat on the next one.", correctWord: "a blessing in disguise" },
+            { id: 20, idiom: "Keep an eye on", emoji: "👀", meaning: "To watch or look after carefully.", example: "Can you __ my bag while I quickly get a drink?", correctWord: "keep an eye on" },
+            { id: 21, idiom: "Miss the boat", emoji: "🚢", meaning: "To miss an opportunity.", example: "The deadline for applications passed yesterday; I totally __.", correctWord: "missed the boat" },
+            { id: 22, idiom: "Get your act together", emoji: "🛑", meaning: "To organize oneself and behave more effectively.", example: "You need to __ if you want to pass the final exams.", correctWord: "get your act together" },
+            { id: 23, idiom: "Give it a shot", emoji: "👍", meaning: "To try something.", example: "I'm not sure if I can do it, but I'll __ anyway!", correctWord: "give it a shot" },
+            { id: 24, idiom: "Think outside the box", emoji: "💡", meaning: "To think creatively and unconventionally.", example: "For this project, we need to __ to come up with a truly unique idea.", correctWord: "think outside the box" },
+            { id: 25, idiom: "Once in a blue moon", emoji: "🌙", meaning: "Very rarely.", example: "I only watch a movie with my parents __, so it's a special treat.", correctWord: "once in a blue moon" },
+            { id: 26, idiom: "Hit the sack", emoji: "😴", meaning: "To go to bed.", example: "I'm exhausted after that long trip, I need to __.", correctWord: "hit the sack" },
+            { id: 27, idiom: "The whole nine yards", emoji: "🎯", meaning: "Everything; all of it.", example: "For his birthday party, we got him a cake, presents, and balloons – __.", correctWord: "the whole nine yards" },
+            { id: 28, idiom: "On the same page", emoji: "🤝", meaning: "To be in agreement about something.", example: "Let's quickly review the plan to make sure we're all __.", correctWord: "on the same page" },
+            { id: 29, idiom: "Couch potato", emoji: "🛋️", meaning: "A very lazy person who spends a lot of time watching TV.", example: "Don't be such a __ this weekend; let's go outside!", correctWord: "couch potato" },
+            { id: 30, idiom: "Wrap my head around", emoji: "🧠", meaning: "To understand something complicated or strange.", example: "I'm finding it hard to __ the physics concepts we learned today.", correctWord: "wrap my head around" },
+            { id: 31, idiom: "Read between the lines", emoji: "📘", meaning: "To understand the hidden or implied meaning.", example: "She said she was 'fine', but if you __, you can tell she's upset.", correctWord: "read between the lines" },
+            { id: 32, idiom: "The icing on the cake", emoji: "👑", meaning: "An extra benefit or positive element that makes a good situation even better.", example: "Getting the job offer was great, but the big salary increase was __.", correctWord: "the icing on the cake" },
+            { id: 33, idiom: "When pigs fly", emoji: "🐷", meaning: "Something that will never happen.", example: "He'll apologize for what he did __!", correctWord: "when pigs fly" },
+            { id: 34, idiom: "Skating on thin ice", emoji: "🥶", meaning: "To be in a risky situation.", example: "If you keep skipping classes, you'll be __ with the principal.", correctWord: "skating on thin ice" },
+            { id: 35, idiom: "A drop in the ocean", emoji: "💧", meaning: "A tiny amount compared to what is needed.", example: "The money we raised is just __ compared to the total needed for the project.", correctWord: "a drop in the ocean" },
+            { id: 36, idiom: "The apple of my eye", emoji: "🍎", meaning: "A person who is cherished above all others.", example: "My younger cousin is absolutely __.", correctWord: "the apple of my eye" },
+            { id: 37, idiom: "Catch up", emoji: "🎉", meaning: "To meet someone after a period of time to share news.", example: "I haven't seen you in ages! We must __ soon.", correctWord: "catch up" },
+            { id: 38, idiom: "Lend a hand", emoji: "🤝", meaning: "Help with something or assist someone.", example: "Can you __ with setting up the decorations for the party?", correctWord: "lend a hand" },
+            { id: 39, idiom: "Hold your horses", emoji: "🐴", meaning: "Wait a moment or slow down.", example: "Just __ for a minute, I need to check the exact time of the meeting.", correctWord: "hold your horses" },
+            { id: 40, idiom: "A dime a dozen", emoji: "🪙", meaning: "Very common and easily found.", example: "Good study guides are __ online, so don't pay too much for one.", correctWord: "a dime a dozen" },
+            { id: 41, idiom: "All ears", emoji: "👂", meaning: "Eager and ready to listen.", example: "Tell me about your trip—I'm __!", correctWord: "all ears" },
+            { id: 42, idiom: "Put all your eggs in one basket", emoji: "🥚", meaning: "To risk everything on one venture.", example: "It's better to apply to a few universities and not __.", correctWord: "put all your eggs in one basket" },
+            { id: 43, idiom: "Jump on the bandwagon", emoji: "🚌", meaning: "To join an activity or trend that has become popular.", example: "Everyone started wearing those shoes, so I decided to __ too.", correctWord: "jump on the bandwagon" },
+            { id: 44, idiom: "To make matters worse", emoji: "📉", meaning: "To make a bad situation even more difficult or unpleasant.", example: "First, I missed the bus, and then, __, it started raining heavily.", correctWord: "to make matters worse" },
+            { id: 45, idiom: "Give the benefit of the doubt", emoji: "❓", meaning: "To accept someone's statement or excuse as true, without proof.", example: "I'll __ and assume she just forgot to reply to the email.", correctWord: "give her the benefit of the doubt" },
+            { id: 46, idiom: "Head over heels", emoji: "🤸", meaning: "Madly in love or extremely enthusiastic about something.", example: "I am __ about the new concert venue; it looks amazing!", correctWord: "head over heels" },
+            { id: 47, idiom: "Through thick and thin", emoji: "🛡️", meaning: "Supporting someone unconditionally, especially during difficult times.", example: "Thanks for always sticking by me __; you're a great friend.", correctWord: "through thick and thin" },
+            { id: 48, idiom: "Take it easy", emoji: "🛀", meaning: "Relax; calm down.", example: "I'm going to __ this weekend after the exams.", correctWord: "take it easy" },
+            { id: 49, idiom: "Get over it", emoji: "🤸", meaning: "Recover from something upsetting.", example: "He was sad about the loss, but he needs to __ now.", correctWord: "get over it" },
+            { id: 50, idiom: "Ring a bell", emoji: "🔔", meaning: "Sound familiar.", example: "That name doesn't __; I've never heard of him.", correctWord: "ring a bell" },
+            { id: 51, idiom: "Sleep on it", emoji: "😴", meaning: "Delay making a decision until the next day.", example: "It's a big choice, so why don't you __?", correctWord: "sleep on it" },
+            { id: 52, idiom: "On the dot", emoji: "🕛", meaning: "Exactly on time.", example: "Make sure you arrive at 12:00 __.", correctWord: "on the dot" },
+            { id: 53, idiom: "Easy come, easy go", emoji: "🌬️", meaning: "Something acquired without effort is also easily lost.", example: "I lost the money I won, but hey, __.", correctWord: "easy come, easy go" },
+            { id: 54, idiom: "Get cold feet", emoji: "🧊", meaning: "Become nervous or hesitant about something.", example: "He was planning to perform, but he __ at the last minute.", correctWord: "got cold feet" },
+            { id: 55, idiom: "Make ends meet", emoji: "💵", meaning: "Earn just enough money to live on.", example: "It's hard to __ with prices rising so fast.", correctWord: "make ends meet" },
+            { id: 56, idiom: "Once bitten, twice shy", emoji: "🐍", meaning: "After a bad experience, one is careful to avoid similar situations.", example: "I won't trust that website again; __.", correctWord: "once bitten, twice shy" },
+            { id: 57, idiom: "Keep your head above water", emoji: "🏊", meaning: "Managing to cope with a difficult situation, especially financial.", example: "I'm working two jobs just to __.", correctWord: "keep my head above water" },
+            { id: 58, idiom: "A storm in a teacup", emoji: "☕", meaning: "A lot of fuss about something unimportant.", example: "The argument over the seating plan was just __.", correctWord: "a storm in a teacup" },
+            { id: 59, idiom: "In a nutshell", emoji: "🌰", meaning: "Summarized briefly.", example: "To put the complicated theory __, it was a disaster.", correctWord: "in a nutshell" },
+            { id: 60, idiom: "The last straw", emoji: "🌾", meaning: "The final irritation that causes someone to lose patience.", example: "When she was late again, that was __.", correctWord: "the last straw" },
+            { id: 61, idiom: "Pass with flying colours", emoji: "🌈", meaning: "Pass an exam or test easily and with high marks.", example: "I studied hard and managed to __.", correctWord: "pass with flying colours" },
+            { id: 62, idiom: "Get the hang of", emoji: "👌", meaning: "Learn how to do something, especially something new.", example: "It took me a week, but now I'm starting to __ playing the guitar.", correctWord: "get the hang of" },
+            { id: 63, idiom: "The bottom line", emoji: "📝", meaning: "The most important factor or result.", example: "__ is that we need to finish this report by Friday.", correctWord: "The bottom line" },
+            { id: 64, idiom: "Turn a blind eye", emoji: "🙈", meaning: "To pretend not to notice something bad or illegal.", example: "The teacher chose to __ to the small whispering.", correctWord: "turn a blind eye" },
+            { id: 65, idiom: "Get the ball rolling", emoji: "⚽", meaning: "To start an activity or process.", example: "Let's __ and start planning our next holiday.", correctWord: "get the ball rolling" },
+            { id: 66, idiom: "By the skin of one's teeth", emoji: "🦷", meaning: "Just barely succeeding in doing something.", example: "I passed the driving test only __.", correctWord: "by the skin of one's teeth" },
+            { id: 67, idiom: "Give someone the cold shoulder", emoji: "🥶", meaning: "To intentionally ignore someone.", example: "I tried to talk to her, but she just __.", correctWord: "gave me the cold shoulder" },
+            { id: 68, idiom: "No pain, no gain", emoji: "💪", meaning: "Suffering is necessary to achieve success.", example: "You must practice every day; __!", correctWord: "no pain, no gain" },
+            { id: 69, idiom: "Jump the gun", emoji: "🏃", meaning: "To start doing something too soon or prematurely.", example: "We should wait for the official announcement and not __.", correctWord: "jump the gun" },
+            { id: 70, idiom: "Keep a straight face", emoji: "😐", meaning: "To manage to look serious and avoid laughing.", example: "It was so funny, I couldn't __ during the presentation.", correctWord: "keep a straight face" },
+            { id: 71, idiom: "Let sleeping dogs lie", emoji: "🐕", meaning: "To avoid bringing up a past problem or argument.", example: "Don't ask him about his old job; it's better to __.", correctWord: "let sleeping dogs lie" },
+            { id: 72, idiom: "Take the plunge", emoji: "💧", meaning: "To finally commit to a risky or serious undertaking.", example: "After months of planning, I decided to __ and start my own club.", correctWord: "take the plunge" },
+            { id: 73, idiom: "Hit the books", emoji: "📖", meaning: "To study hard, usually for a test or exam.", example: "I need to __ tonight if I want to pass the maths test.", correctWord: "hit the books" },
+            { id: 74, idiom: "Run out of steam", emoji: "💨", meaning: "To lose momentum or energy.", example: "He started the marathon strong but quickly __ halfway through.", correctWord: "ran out of steam" },
+            { id: 75, idiom: "Put your feet up", emoji: "🏖️", meaning: "To relax, take a break.", example: "I'm looking forward to getting home and __ for the evening.", correctWord: "putting my feet up" },
+            { id: 76, idiom: "Get something out of your system", emoji: "🌬️", meaning: "To do something you've wanted to do so you can move on.", example: "You should take that holiday to __ before you start university.", correctWord: "get it out of your system" },
+            { id: 77, idiom: "Two sides of the same coin", emoji: "🪙", meaning: "Two different aspects of the same situation.", example: "Their honesty and bluntness are just __.", correctWord: "two sides of the same coin" },
+            { id: 78, idiom: "Break a leg", emoji: "🤞", meaning: "Good luck (used especially to wish success to a performer).", example: "Tell him to __ before he goes on stage!", correctWord: "break a leg" },
+            { id: 79, idiom: "Against the clock", emoji: "⏱️", meaning: "Rushing to meet a tight deadline.", example: "We worked __ to get the newspaper printed before morning.", correctWord: "against the clock" },
+            { id: 80, idiom: "Get down to brass tacks", emoji: "🛠️", meaning: "Start discussing the essential, fundamental details.", example: "Enough small talk, let's __ and discuss the budget.", correctWord: "get down to brass tacks" },
+            { id: 81, idiom: "Add insult to injury", emoji: "🩹", meaning: "To make a bad situation worse.", example: "Not only did they lose the match, but to __, they had to pay a fine.", correctWord: "add insult to injury" },
+            { id: 82, idiom: "Pull yourself together", emoji: "🧘", meaning: "Recover control of one's emotions.", example: "You need to __ and focus on the presentation.", correctWord: "pull yourself together" },
+            { id: 83, idiom: "Take a deep breath", emoji: "😮‍💨", meaning: "Pause to calm down before continuing.", example: "Just __ and start your speech when you feel ready.", correctWord: "take a deep breath" },
+            { id: 84, idiom: "Come hell or high water", emoji: "🌊", meaning: "No matter what difficulties arise.", example: "We will finish this project by the deadline, __.", correctWord: "come hell or high water" },
+            { id: 85, idiom: "Give and take", emoji: "🤲", meaning: "Compromise between opposing positions.", example: "A good friendship requires a lot of __.", correctWord: "give and take" },
+            { id: 86, idiom: "Keep your shirt on", emoji: "👚", meaning: "Remain calm; don't get angry.", example: "__, I'll be there in five minutes!", correctWord: "Keep your shirt on" },
+            { id: 87, idiom: "Up in the air", emoji: "🪁", meaning: "Uncertain or undecided.", example: "Our travel plans for next summer are still __.", correctWord: "up in the air" },
+            { id: 88, idiom: "Spill the beans", emoji: "🍲", meaning: "Reveal a secret.", example: "Come on, don't keep me waiting—__ about your new job!", correctWord: "spill the beans" },
+            { id: 89, idiom: "Be on cloud nine", emoji: "☁️", meaning: "Be extremely happy.", example: "She has been __ since she got into her dream university.", correctWord: "on cloud nine" },
+            { id: 90, idiom: "Walk on air", emoji: "🎈", meaning: "Be extremely happy or excited.", example: "He was practically __ after his successful performance.", correctWord: "walking on air" },
+            { id: 91, idiom: "A red letter day", emoji: "📅", meaning: "A significant, memorable, or joyful day.", example: "My graduation day was truly __ for my whole family.", correctWord: "a red letter day" },
+            { id: 92, idiom: "To each their own", emoji: "🤷", meaning: "Everyone has their own preferences.", example: "I wouldn't choose that colour, but __.", correctWord: "to each their own" },
+            { id: 93, idiom: "Better safe than sorry", emoji: "⛑️", meaning: "It is better to take precautions than to regret the consequences.", example: "Put on sunscreen, just to be on the safe side—__.", correctWord: "better safe than sorry" },
+            { id: 94, idiom: "Time flies", emoji: "⏳", meaning: "Time passes quickly.", example: "I can't believe the holidays are over already; __!", correctWord: "time flies" },
+            { id: 95, idiom: "Get a kick out of", emoji: "💥", meaning: "To enjoy doing something very much.", example: "I really __ watching old cartoons.", correctWord: "get a kick out of" },
+            { id: 96, idiom: "Take five", emoji: "⏸️", meaning: "To take a short break.", example: "We've been studying for two hours, let's __.", correctWord: "take five" },
+            { id: 97, idiom: "Get the picture", emoji: "🖼️", meaning: "To understand the situation.", example: "I explained it slowly so she could __.", correctWord: "get the picture" },
+            { id: 98, idiom: "Speak your mind", emoji: "💬", meaning: "To say exactly what you think.", example: "She's not afraid to __ even if others disagree.", correctWord: "speak her mind" },
+            { id: 99, idiom: "Hit the jackpot", emoji: "🎰", meaning: "To have sudden great success, especially financially.", example: "Finding that antique at the market meant I __!", correctWord: "hit the jackpot" },
+            { id: 100, idiom: "The best of both worlds", emoji: "🌍", meaning: "A situation where you can enjoy the advantages of two very different things.", example: "Working remotely lets me have __.", correctWord: "the best of both worlds" }
+        ];
+
+        // System States
+        let activeView = 'list'; // list | flashcard | quiz
+        let favorites = [];
+        let scoreHistory = [];
+        let favoritesOnlyFilter = false;
+
+        // Flashcard deck dynamic state
+        let flashcardPool = [];
+        let currentFlashcardIndex = 0;
+        let isCardFlipped = false;
+
+        // Active Audio Variable
+        let currentAudio = null;
+
+        // Quiz State
+        let quizQuestions = [];
+        const QUIZ_SIZE = 20;
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+        const FEEDBACK_DELAY_MS = 1600;
+
+        // On App Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLocalPreferences();
+            syncDarkStyle();
+            initAudioFallbacks();
+            renderIdiomList();
+            initFlashcardSession();
+            updateStatsBar();
+            setupKeyboardControls();
+        });
+
+        // Load preferences from local storage
+        function loadLocalPreferences() {
+            try {
+                // Bookmarks / Favorites
+                const savedFavs = localStorage.getItem('igcse_idioms_favs');
+                if (savedFavs) {
+                    favorites = JSON.parse(savedFavs);
+                }
+                
+                // Dark Mode Preference
+                const themePref = localStorage.getItem('igcse_idioms_theme');
+                if (themePref === 'dark' || (!themePref && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+
+                // Quiz Score History
+                const savedScores = localStorage.getItem('igcse_idioms_scores');
+                if (savedScores) {
+                    scoreHistory = JSON.parse(savedScores);
+                }
+                updateBestScorePill();
+            } catch (e) {
+                console.error("Local storage error:", e);
+            }
+        }
+
+        // --- AUDIO ENGINE ---
+        function createFilename(idiomId) {
+            return `${idiomId.toString().padStart(2, '0')}.mp3`;
+        }
+
+        function playAudio(idiomId, idiom) {
+            const filename = createFilename(idiomId);
+            stopCurrentAudio();
+
+            const audio = new Audio(filename);
+            currentAudio = audio;
+            audio.play().catch(err => {
+                console.warn(`Audio play failed for ID ${idiomId}: ${filename}. Verify file exists in matching directory.`, err);
+            });
+        }
+
+        function stopCurrentAudio() {
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+        }
+
+        function playCorrectSound() {
+            const audio = new Audio('correct.mp3');
+            audio.play().catch(() => {});
+        }
+
+        function playWrongSound() {
+            const audio = new Audio('wrong.mp3');
+            audio.play().catch(() => {});
+        }
+
+        function initAudioFallbacks() {
+            // Optional global audio preloading hooks
+        }
+
+        // --- VIEW MODE SYSTEM ---
+        function setViewMode(view) {
+            activeView = view;
+            stopCurrentAudio();
+
+            // Hide all panels
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-flashcard').classList.add('hidden');
+            document.getElementById('view-quiz').classList.add('hidden');
+            
+            // Remove active button classes
+            document.getElementById('btn-view-list').classList.remove('btn-active');
+            document.getElementById('btn-view-flashcard').classList.remove('btn-active');
+            document.getElementById('btn-view-quiz').classList.remove('btn-active');
+
+            // Toggle visibility & active highlights
+            if (view === 'list') {
+                document.getElementById('view-list').classList.remove('hidden');
+                document.getElementById('btn-view-list').classList.add('btn-active');
+                document.getElementById('search-filter-panel').classList.remove('hidden');
+                document.getElementById('stats-counter-bar').classList.remove('hidden');
+                renderIdiomList();
+            } else if (view === 'flashcard') {
+                document.getElementById('view-flashcard').classList.remove('hidden');
+                document.getElementById('btn-view-flashcard').classList.add('btn-active');
+                document.getElementById('search-filter-panel').classList.add('hidden');
+                document.getElementById('stats-counter-bar').classList.add('hidden');
+                initFlashcardSession();
+            } else if (view === 'quiz') {
+                document.getElementById('view-quiz').classList.remove('hidden');
+                document.getElementById('btn-view-quiz').classList.add('btn-active');
+                document.getElementById('search-filter-panel').classList.add('hidden');
+                document.getElementById('stats-counter-bar').classList.add('hidden');
+                showQuizIntro();
+            }
+        }
+
+        // --- BOOKMARK / FAVORITE SYSTEM ---
+        function isFavorited(id) {
+            return favorites.includes(id);
+        }
+
+        function toggleFavorite(id, event) {
+            if (event) event.stopPropagation(); // Avoid triggering parent clicks
+            
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(id);
+            }
+            
+            // Persist
+            localStorage.setItem('igcse_idioms_favs', JSON.stringify(favorites));
+            
+            // Live Updates
+            updateStatsBar();
+            
+            // Re-render conditional elements
+            if (activeView === 'list') {
+                const searchVal = document.getElementById('idiom-search').value;
+                if (searchVal || favoritesOnlyFilter) {
+                    filterIdioms();
+                } else {
+                    renderIdiomList();
+                }
+            }
+        }
+
+        function toggleFavoritesOnlyFilter() {
+            favoritesOnlyFilter = !favoritesOnlyFilter;
+            const btn = document.getElementById('favorites-filter-btn');
+            const star = document.getElementById('filter-star-icon');
+            
+            if (favoritesOnlyFilter) {
+                btn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+                btn.classList.remove('bg-slate-50', 'dark:bg-slate-800', 'text-slate-800', 'dark:text-slate-100');
+                star.classList.add('text-amber-300');
+                star.classList.remove('text-slate-400');
+                star.setAttribute('fill', 'currentColor');
+            } else {
+                btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+                btn.classList.add('bg-slate-50', 'dark:bg-slate-800', 'text-slate-800', 'dark:text-slate-100');
+                star.classList.remove('text-amber-300');
+                star.classList.add('text-slate-400');
+                star.removeAttribute('fill');
+            }
+            filterIdioms();
+        }
+
+        // --- RENDER MASTER LIST VIEW ---
+        function renderIdiomList(dataToRender = ALL_IDIOMS_DATA) {
+            const listContainer = document.getElementById('view-list');
+            if (!listContainer) return;
+
+            if (favoritesOnlyFilter) {
+                dataToRender = dataToRender.filter(item => isFavorited(item.id));
+            }
+
+            if (dataToRender.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 dark:text-slate-500 space-y-3">
+                        <span class="text-4xl block">🔍</span>
+                        <p class="font-bold text-sm">No matched idioms found in this selection.</p>
+                        ${favoritesOnlyFilter ? '<p class="text-xs">Try starring some idioms to see them here!</p>' : ''}
+                    </div>
+                `;
+                updateStatsBar(0);
+                return;
+            }
+
+            const cardsHTML = dataToRender.map((d, index) => {
+                // Alternating academic color designs
+                const cardThemeId = (d.id % 4) + 1;
+                const themeClass = `theme-card-${cardThemeId}`;
+                const highlightedExample = d.example.replace('__', `<strong class="example-highlight">${d.correctWord}</strong>`);
+                const favActive = isFavorited(d.id);
+
+                return `
+                    <div class="p-5 rounded-2xl transition-all duration-300 relative group overflow-hidden print-card hover:scale-[1.01] hover:shadow-md ${themeClass}">
+                        
+                        <!-- Header Line -->
+                        <div class="flex justify-between items-start gap-2 mb-2 no-print">
+                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 font-inter">IDIOM #${d.id.toString().padStart(2, '0')}</span>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="playAudio(${d.id}, '${d.idiom}')" class="p-1.5 rounded-lg bg-white/70 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-110 transition duration-150" title="Listen Audio">
+                                    🔊
+                                </button>
+                                <button onclick="toggleFavorite(${d.id}, event)" class="p-1.5 rounded-lg bg-white/70 dark:bg-slate-800/60 hover:scale-110 transition duration-150" title="Favorite">
+                                    <span class="${favActive ? 'text-amber-500' : 'text-slate-300 dark:text-slate-600'} text-sm">★</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Print Specific Header -->
+                        <div class="hidden print:block font-bold text-xs text-slate-500 mb-1">
+                            Idiom ${d.id}
+                        </div>
+
+                        <!-- Title and Emoji -->
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="text-lg font-black text-blue-900 dark:text-blue-300 tracking-tight font-inter leading-tight">${d.idiom}</h3>
+                            <span class="text-2xl shrink-0" role="img" aria-label="emoji">${d.emoji}</span>
+                        </div>
+
+                        <!-- Definition Text -->
+                        <p class="text-sm font-semibold text-emerald-800 dark:text-emerald-400/90 font-sans mb-3 leading-snug">
+                            ${d.meaning}
+                        </p>
+
+                        <!-- Example Handwriting sentence -->
+                        <div class="bg-white/40 dark:bg-slate-950/20 rounded-xl p-3 border border-black/5 dark:border-white/5">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-widest block mb-1">Example</span>
+                            <p class="handwriting text-slate-800 dark:text-slate-200 leading-relaxed">${highlightedExample}</p>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+
+            listContainer.innerHTML = cardsHTML;
+            updateStatsBar(dataToRender.length);
+        }
+
+        // --- SEARCH ENGINE ---
+        function filterIdioms() {
+            const searchInput = document.getElementById('idiom-search');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const val = searchInput.value.toLowerCase();
+
+            if (val) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+
+            const matched = ALL_IDIOMS_DATA.filter(item => {
+                return (
+                    item.idiom.toLowerCase().includes(val) ||
+                    item.meaning.toLowerCase().includes(val) ||
+                    item.example.toLowerCase().includes(val)
+                );
+            });
+
+            renderIdiomList(matched);
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('idiom-search');
+            searchInput.value = '';
+            filterIdioms();
+            searchInput.focus();
+        }
+
+        function updateStatsBar(currentCount = ALL_IDIOMS_DATA.length) {
+            const label = document.getElementById('rendered-count-label');
+            const favLabel = document.getElementById('favorites-count-label');
+            
+            if (label) {
+                label.textContent = `Showing ${currentCount} of ${ALL_IDIOMS_DATA.length} idioms`;
+            }
+            if (favLabel) {
+                favLabel.textContent = `★ ${favorites.length} Bookmarked`;
+            }
+        }
+
+        // --- FLASHCARD STUDY CONTROLLER ---
+        function initFlashcardSession() {
+            const poolType = document.getElementById('flashcard-pool-selector').value;
+            isCardFlipped = false;
+            
+            // Handle 3D rotation transition state reset
+            const cardObject = document.getElementById('flashcard-3d-object');
+            if (cardObject) {
+                cardObject.classList.remove('rotate-y-180');
+            }
+
+            if (poolType === 'favorites') {
+                flashcardPool = ALL_IDIOMS_DATA.filter(item => isFavorited(item.id));
+            } else {
+                flashcardPool = [...ALL_IDIOMS_DATA];
+            }
+
+            if (flashcardPool.length === 0) {
+                // Fallback UI for Empty favorites selection
+                document.getElementById('fc-front-id').textContent = '⚠️ Empty Deck';
+                document.getElementById('fc-front-title').textContent = 'No bookmarks added yet!';
+                document.getElementById('fc-front-emoji').textContent = '⭐';
+                document.getElementById('fc-progress-counter').textContent = 'Card 0 of 0';
+                currentFlashcardIndex = 0;
+                return;
+            }
+
+            currentFlashcardIndex = 0;
+            updateFlashcardDOM();
+        }
+
+        function updateFlashcardDOM() {
+            if (flashcardPool.length === 0) return;
+            const item = flashcardPool[currentFlashcardIndex];
+            
+            // Revert flipped state on navigation
+            isCardFlipped = false;
+            document.getElementById('flashcard-3d-object').classList.remove('rotate-y-180');
+
+            setTimeout(() => {
+                // FRONT SIDE DOM Updates
+                document.getElementById('fc-front-id').textContent = `Idiom #${item.id.toString().padStart(2, '0')}`;
+                document.getElementById('fc-front-title').textContent = item.idiom;
+                document.getElementById('fc-front-emoji').textContent = item.emoji;
+                
+                // Favorite Button Front Update
+                const starBtn = document.getElementById('fc-front-star-btn');
+                if (isFavorited(item.id)) {
+                    starBtn.textContent = '★';
+                    starBtn.classList.add('text-amber-500');
+                    starBtn.classList.remove('text-slate-300');
+                } else {
+                    starBtn.textContent = '☆';
+                    starBtn.classList.remove('text-amber-500');
+                    starBtn.classList.add('text-slate-300');
+                }
+
+                // BACK SIDE DOM Updates
+                document.getElementById('fc-back-id').textContent = `Definition Details (ID #${item.id})`;
+                document.getElementById('fc-back-emoji').textContent = item.emoji;
+                document.getElementById('fc-back-meaning').textContent = item.meaning;
+                
+                const highlighted = item.example.replace('__', `<strong class="text-red-500 dark:text-red-400 font-bold underline font-handwriting decoration-wavy">${item.correctWord}</strong>`);
+                document.getElementById('fc-back-example').innerHTML = highlighted;
+
+                // Progress update
+                document.getElementById('fc-progress-counter').textContent = `Card ${currentFlashcardIndex + 1} of ${flashcardPool.length}`;
+            }, isCardFlipped ? 150 : 0);
+        }
+
+        function flipActiveCard() {
+            if (flashcardPool.length === 0) return;
+            isCardFlipped = !isCardFlipped;
+            const cardObject = document.getElementById('flashcard-3d-object');
+            
+            if (isCardFlipped) {
+                cardObject.classList.add('rotate-y-180');
+            } else {
+                cardObject.classList.remove('rotate-y-180');
+            }
+        }
+
+        function stepFlashcard(direction) {
+            if (flashcardPool.length === 0) return;
+            
+            currentFlashcardIndex += direction;
+            if (currentFlashcardIndex >= flashcardPool.length) {
+                currentFlashcardIndex = 0; // wrap around
+            } else if (currentFlashcardIndex < 0) {
+                currentFlashcardIndex = flashcardPool.length - 1; // wrap to back
+            }
+            updateFlashcardDOM();
+        }
+
+        function shuffleFlashcards() {
+            if (flashcardPool.length <= 1) return;
+            
+            // Fisher-Yates Shuffle
+            for (let i = flashcardPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcardPool[i], flashcardPool[j]] = [flashcardPool[j], flashcardPool[i]];
+            }
+            currentFlashcardIndex = 0;
+            updateFlashcardDOM();
+        }
+
+        function resetFlashcardsOrder() {
+            const poolType = document.getElementById('flashcard-pool-selector').value;
+            if (poolType === 'favorites') {
+                flashcardPool = ALL_IDIOMS_DATA.filter(item => isFavorited(item.id));
+            } else {
+                flashcardPool = [...ALL_IDIOMS_DATA];
+            }
+            currentFlashcardIndex = 0;
+            updateFlashcardDOM();
+        }
+
+        function playFlashcardAudio() {
+            if (flashcardPool.length === 0) return;
+            const item = flashcardPool[currentFlashcardIndex];
+            playAudio(item.id, item.idiom);
+        }
+
+        function toggleFlashcardFavorite() {
+            if (flashcardPool.length === 0) return;
+            const item = flashcardPool[currentFlashcardIndex];
+            toggleFavorite(item.id);
+            updateFlashcardDOM();
+        }
+
+        // --- EXAM PRACTICE QUIZ SYSTEM ---
+        function showQuizIntro() {
+            document.getElementById('quiz-intro-screen').classList.remove('hidden');
+            document.getElementById('quiz-live-window').classList.add('hidden');
+            document.getElementById('quiz-results-window').classList.add('hidden');
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-intro-screen').classList.add('hidden');
+            document.getElementById('quiz-live-window').classList.remove('hidden');
+            document.getElementById('quiz-results-window').classList.add('hidden');
+
+            quizScore = 0;
+            currentQuestionIndex = 0;
+            quizQuestions = [];
+
+            // Randomize and pull 20 idioms
+            const shuffledPool = [...ALL_IDIOMS_DATA].sort(() => 0.5 - Math.random());
+            const targetIdioms = shuffledPool.slice(0, QUIZ_SIZE);
+
+            // Generate diagnostic questions
+            targetIdioms.forEach((idiomItem) => {
+                quizQuestions.push(buildExamQuestion(idiomItem, ALL_IDIOMS_DATA));
+            });
+
+            renderQuizQuestion();
+        }
+
+        function buildExamQuestion(target, masterList) {
+            // Pick two distinct distraction idioms
+            const listWithoutTarget = masterList.filter(x => x.id !== target.id);
+            const distrs = listWithoutTarget.sort(() => 0.5 - Math.random()).slice(0, 2);
+
+            const isSentenceMode = Math.random() < 0.5;
+            const questionData = {
+                id: target.id,
+                correctIdiomName: target.idiom
+            };
+
+            if (isSentenceMode) {
+                questionData.formatType = 'contextual';
+                const hiddenExpression = target.example.replace(new RegExp(`\\b${target.correctWord.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&")}\\b`, 'i'), '___________');
+                questionData.queryText = `Fill the contextual blank: <br><span class="font-handwriting text-indigo-900 dark:text-blue-300 text-xl leading-relaxed">"${hiddenExpression}"</span>`;
+                questionData.correctAnswer = target.idiom;
+                questionData.options = [
+                    { text: target.idiom, isCorrect: true },
+                    { text: distrs[0].idiom, isCorrect: false },
+                    { text: distrs[1].idiom, isCorrect: false }
+                ].sort(() => 0.5 - Math.random());
+            } else {
+                questionData.formatType = 'meaning';
+                questionData.queryText = `Identify definition for: <br><strong class="font-inter text-2xl text-indigo-950 dark:text-indigo-200 tracking-tight block mt-1">"${target.idiom}"</strong>`;
+                questionData.correctAnswer = target.meaning;
+                questionData.options = [
+                    { text: target.meaning, isCorrect: true },
+                    { text: distrs[0].meaning, isCorrect: false },
+                    { text: distrs[1].meaning, isCorrect: false }
+                ].sort(() => 0.5 - Math.random());
+            }
+
+            return questionData;
+        }
+
+        function renderQuizQuestion() {
+            if (currentQuestionIndex >= QUIZ_SIZE) {
+                triggerQuizEnd();
+                return;
+            }
+
+            const currentQ = quizQuestions[currentQuestionIndex];
+            
+            // Header stats update
+            document.getElementById('quiz-q-counter').textContent = `Question ${currentQuestionIndex + 1} of ${QUIZ_SIZE}`;
+            document.getElementById('quiz-score-tracker').textContent = `Score: ${quizScore}/${QUIZ_SIZE}`;
+            
+            // Progress bar update
+            const progressPct = ((currentQuestionIndex) / QUIZ_SIZE) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct || 5}%`;
+
+            const windowContainer = document.getElementById('quiz-question-box');
+            
+            const optionsHTML = currentQ.options.map((opt, idx) => {
+                return `
+                    <label id="opt-label-${idx}" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all duration-150 relative">
+                        <input type="radio" name="exam_option" value="${opt.text}" data-correct="${opt.isCorrect}" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">${opt.text}</span>
+                    </label>
+                `;
+            }).join('');
+
+            windowContainer.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-indigo-50/50 dark:bg-slate-800/40 border border-indigo-100/60 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-500 dark:text-indigo-400 block mb-1">
+                            ${currentQ.formatType === 'contextual' ? 'Exam Exercise: Completion' : 'Exam Exercise: Semantics'}
+                        </span>
+                        <p class="text-slate-800 dark:text-slate-100 font-sans leading-relaxed text-lg font-medium">${currentQ.queryText}</p>
+                    </div>
+
+                    <form id="quiz-interactive-form" onsubmit="event.preventDefault(); validateQuizAnswer();" class="space-y-3">
+                        <div class="space-y-2.5">
+                            ${optionsHTML}
+                        </div>
+                        
+                        <div class="pt-4 flex gap-3">
+                            <button type="submit" id="quiz-submit-action" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow-md transition-all">
+                                Validate Choice
+                            </button>
+                            <button type="button" onclick="setViewMode('list')" class="px-5 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 font-bold rounded-xl transition">
+                                Quit Test
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function validateQuizAnswer() {
+            const form = document.getElementById('quiz-interactive-form');
+            const selectedOpt = form.querySelector('input[name="exam_option"]:checked');
+
+            if (!selectedOpt) {
+                // Inline validation instead of native alert
+                alert("Please select an answer to check!");
+                return;
+            }
+
+            const submitBtn = document.getElementById('quiz-submit-action');
+            submitBtn.disabled = true;
+
+            const isCorrect = selectedOpt.getAttribute('data-correct') === 'true';
+            const selectedLabel = selectedOpt.closest('label');
+
+            // Lock options input interaction
+            form.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+
+            if (isCorrect) {
+                quizScore++;
+                selectedLabel.classList.remove('border-slate-200', 'dark:border-slate-700/60');
+                selectedLabel.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/30', 'text-emerald-900');
+                playCorrectSound();
+            } else {
+                selectedLabel.classList.remove('border-slate-200', 'dark:border-slate-700/60');
+                selectedLabel.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-950/30', 'text-red-900');
+                playWrongSound();
+
+                // Highlight the correct answer
+                form.querySelectorAll('input[type="radio"]').forEach((radio, idx) => {
+                    if (radio.getAttribute('data-correct') === 'true') {
+                        const correctLabel = radio.closest('label');
+                        correctLabel.classList.remove('border-slate-200', 'dark:border-slate-700/60');
+                        correctLabel.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/30');
+                    }
+                });
+            }
+
+            // Move forward with latency for feedback comprehension
+            setTimeout(() => {
+                currentQuestionIndex++;
+                renderQuizQuestion();
+            }, FEEDBACK_DELAY_MS);
+        }
+
+        function triggerQuizEnd() {
+            document.getElementById('quiz-live-window').classList.add('hidden');
+            document.getElementById('quiz-results-window').classList.remove('hidden');
+
+            // Grade feedback
+            document.getElementById('quiz-results-score').textContent = `${quizScore}/${QUIZ_SIZE}`;
+            
+            const commentBox = document.getElementById('quiz-results-comment');
+            const emojiBox = document.getElementById('quiz-results-emoji');
+
+            if (quizScore === QUIZ_SIZE) {
+                emojiBox.textContent = '🌟';
+                commentBox.textContent = "Perfect! Exceptional mastery of the IGCSE idiom syllabus. Keep it up!";
+            } else if (quizScore >= 16) {
+                emojiBox.textContent = '🏆';
+                commentBox.textContent = "Outstanding score! You have robust vocabulary competence.";
+            } else if (quizScore >= 12) {
+                emojiBox.textContent = '👍';
+                commentBox.textContent = "Good pass. Solid foundational performance. Review your bookmarks to push for perfection.";
+            } else {
+                emojiBox.textContent = '📚';
+                commentBox.textContent = "Keep studying. Try revising utilizing the Flashcards view then attempt the exam assessment again.";
+            }
+
+            saveCompletedScore(quizScore);
+        }
+
+        // --- SCORE HISTORY RECORD TRACKING ---
+        function saveCompletedScore(score) {
+            try {
+                const newRecord = {
+                    score: score,
+                    total: QUIZ_SIZE,
+                    timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                };
+
+                scoreHistory.unshift(newRecord); // Prepend to history stack
+                if (scoreHistory.length > 10) scoreHistory.pop(); // Hold 10 items limit
+
+                localStorage.setItem('igcse_idioms_scores', JSON.stringify(scoreHistory));
+                updateBestScorePill();
+            } catch (e) {
+                console.error("Local history save error:", e);
+            }
+        }
+
+        function updateBestScorePill() {
+            const pill = document.getElementById('highest-score-pill');
+            if (scoreHistory.length === 0) {
+                pill.textContent = "Best: --";
+                return;
+            }
+            const highest = Math.max(...scoreHistory.map(x => x.score));
+            pill.textContent = `Best: ${highest}/${QUIZ_SIZE}`;
+        }
+
+        function showScoreHistoryModal() {
+            const modal = document.getElementById('score-history-modal');
+            const list = document.getElementById('score-history-list');
+            modal.classList.remove('hidden');
+
+            if (scoreHistory.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <p class="text-xs font-bold">No test scores recorded yet.</p>
+                        <p class="text-[10px] mt-1">Complete a test to populate your records.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = scoreHistory.map((rec, idx) => {
+                const percent = Math.round((rec.score / rec.total) * 100);
+                let colorClass = 'text-red-500';
+                if (percent >= 80) colorClass = 'text-emerald-500';
+                else if (percent >= 60) colorClass = 'text-amber-500';
+
+                return `
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-100 dark:border-slate-800/80">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] text-slate-400 font-medium block">${rec.timestamp}</span>
+                            <span class="text-slate-800 dark:text-slate-200">Attempt #${scoreHistory.length - idx}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="${colorClass} text-sm font-black">${rec.score}/${rec.total}</span>
+                            <span class="text-[10px] text-slate-400 block">${percent}% Passed</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeScoreHistoryModal() {
+            document.getElementById('score-history-modal').classList.add('hidden');
+        }
+
+        function clearScoreHistory() {
+            scoreHistory = [];
+            localStorage.removeItem('igcse_idioms_scores');
+            updateBestScorePill();
+            showScoreHistoryModal();
+        }
+
+        // --- KEYBOARD FLASHCARD ACCESSIBILITY CONTROLS ---
+        function setupKeyboardControls() {
+            document.addEventListener('keydown', (e) => {
+                if (activeView !== 'flashcard') return;
+
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    flipActiveCard();
+                } else if (e.code === 'ArrowLeft') {
+                    e.preventDefault();
+                    stepFlashcard(-1);
+                } else if (e.code === 'ArrowRight') {
+                    e.preventDefault();
+                    stepFlashcard(1);
+                }
+            });
+        }
+
+        // --- DARK MODE SYSTEM ---
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('igcse_idioms_theme', isDark ? 'dark' : 'light');
+            syncDarkStyle();
+        }
+
+        function syncDarkStyle() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
+            
+            if (isDark) {
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
