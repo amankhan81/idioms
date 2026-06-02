@@ -270,7 +270,10 @@
         <!-- COUNTER STATS STRIP -->
         <div id="stats-counter-bar" class="mb-4 flex justify-between items-center text-xs font-extrabold text-slate-500 dark:text-slate-400 px-1.5 no-print">
             <span id="rendered-count-label">Showing 100 of 100 idioms</span>
-            <span id="favorites-count-label" class="text-blue-600 dark:text-blue-400">★ 0 Bookmarked</span>
+            <span id="favorites-count-label" class="text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.18 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.49 11.112c-.773-.559-.374-1.81.588-1.81h4.906a1 1 0 00.95-.69l1.519-4.674z"/></svg>
+                <span id="favorites-count-text">0 Bookmarked</span>
+            </span>
         </div>
 
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm main-content-card">
@@ -299,11 +302,19 @@
                         
                         <!-- FRONT SIDE -->
                         <div class="absolute inset-0 backface-hidden bg-gradient-to-tr from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-8 flex flex-col justify-between shadow-xl">
-                            <div class="flex justify-between items-start">
+                            <div class="flex justify-between items-center">
                                 <span class="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold font-inter" id="fc-front-id">Idiom #01</span>
-                                <div class="flex items-center gap-1">
-                                    <button onclick="event.stopPropagation(); playFlashcardAudio()" class="p-2 text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-110 transition duration-150 text-xl" title="Listen Audio">🔊</button>
-                                    <button onclick="event.stopPropagation(); toggleFlashcardFavorite()" id="fc-front-star-btn" class="p-2 text-slate-300 hover:scale-110 transition duration-150 text-xl" title="Add to Bookmarks">★</button>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="event.stopPropagation(); playFlashcardAudio()" class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/50 hover:scale-105 active:scale-95 transition-all duration-200" title="Listen Audio">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                                        </svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); toggleFlashcardFavorite()" id="fc-front-star-btn" class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:scale-105 active:scale-95 transition-all duration-200" title="Add to Bookmarks">
+                                        <svg class="w-4 h-4 transition-all duration-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="fc-star-svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.18 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.49 11.112c-.773-.559-.374-1.81.588-1.81h4.906a1 1 0 00.95-.69l1.519-4.674z" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             
@@ -326,7 +337,7 @@
                                 <div class="text-center">
                                     <span class="text-xs uppercase text-emerald-600 dark:text-emerald-400 font-extrabold tracking-widest block mb-1">Definition</span>
                                     <p class="text-lg font-extrabold text-emerald-900 dark:text-emerald-300 font-sans" id="fc-back-meaning">Extremely happy and delighted.</p>
-                                </div>
+                                end</div>
                                 <div class="border-t border-slate-200 dark:border-slate-700/60 pt-3 text-center">
                                     <span class="text-xs uppercase text-amber-600 dark:text-amber-400 font-extrabold tracking-widest block mb-1">Exam Context Example</span>
                                     <p class="handwriting text-slate-800 dark:text-slate-100 text-lg" id="fc-back-example">I was <strong class="text-red-500">over the moon</strong> when I heard I got the concert tickets!</p>
@@ -521,7 +532,7 @@
             { id: 31, idiom: "Read between the lines", emoji: "📘", meaning: "To understand the hidden or implied meaning.", example: "She said she was 'fine', but if you __, you can tell she's upset.", correctWord: "read between the lines" },
             { id: 32, idiom: "The icing on the cake", emoji: "👑", meaning: "An extra benefit or positive element that makes a good situation even better.", example: "Getting the job offer was great, but the big salary increase was __.", correctWord: "the icing on the cake" },
             { id: 33, idiom: "When pigs fly", emoji: "🐷", meaning: "Something that will never happen.", example: "He'll apologize for what he did __!", correctWord: "when pigs fly" },
-            { id: 34, idiom: "Skating on thin ice", emoji: "🥶", meaning: "To be in a risky situation.", example: "If you keep skipping classes, you'll be __ with the principal.", correctWord: "skating on thin ice" },
+            { id: 34, font: "Skating on thin ice", emoji: "🥶", meaning: "To be in a risky situation.", example: "If you keep skipping classes, you'll be __ with the principal.", correctWord: "skating on thin ice" },
             { id: 35, idiom: "A drop in the ocean", emoji: "💧", meaning: "A tiny amount compared to what is needed.", example: "The money we raised is just __ compared to the total needed for the project.", correctWord: "a drop in the ocean" },
             { id: 36, idiom: "The apple of my eye", emoji: "🍎", meaning: "A person who is cherished above all others.", example: "My younger cousin is absolutely __.", correctWord: "the apple of my eye" },
             { id: 37, idiom: "Catch up", emoji: "🎉", meaning: "To meet someone after a period of time to share news.", example: "I haven't seen you in ages! We must __ soon.", correctWord: "catch up" },
@@ -812,11 +823,15 @@
                         <div class="flex justify-between items-start gap-2 mb-2 no-print">
                             <span class="text-xs font-bold text-slate-400 dark:text-slate-500 font-inter">IDIOM #${d.id.toString().padStart(2, '0')}</span>
                             <div class="flex items-center gap-1.5">
-                                <button onclick="playAudio(${d.id}, '${d.idiom}')" class="p-1.5 rounded-lg bg-white/70 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-110 transition duration-150" title="Listen Audio">
-                                    🔊
+                                <button onclick="playAudio(${d.id}, '${d.idiom}')" class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/50 hover:scale-105 active:scale-95 transition-all duration-200" title="Listen Audio">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                                    </svg>
                                 </button>
-                                <button onclick="toggleFavorite(${d.id}, event)" class="p-1.5 rounded-lg bg-white/70 dark:bg-slate-800/60 hover:scale-110 transition duration-150" title="Favorite">
-                                    <span class="${favActive ? 'text-amber-500' : 'text-slate-300 dark:text-slate-600'} text-sm">★</span>
+                                <button onclick="toggleFavorite(${d.id}, event)" class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:scale-105 active:scale-95 transition-all duration-200" title="Favorite">
+                                    <svg class="w-4 h-4 transition-all duration-200 shrink-0" fill="${favActive ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.588 1.81l-3.97 2.883a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.883a1 1 0 00-1.18 0l-3.97 2.883c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.49 11.112c-.773-.559-.374-1.81.588-1.81h4.906a1 1 0 00.95-.69l1.519-4.674z" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -885,13 +900,13 @@
 
         function updateStatsBar(currentCount = ALL_IDIOMS_DATA.length) {
             const label = document.getElementById('rendered-count-label');
-            const favLabel = document.getElementById('favorites-count-label');
+            const favText = document.getElementById('favorites-count-text');
             
             if (label) {
                 label.textContent = `Showing ${currentCount} of ${ALL_IDIOMS_DATA.length} idioms`;
             }
-            if (favLabel) {
-                favLabel.textContent = `★ ${favorites.length} Bookmarked`;
+            if (favText) {
+                favText.textContent = `${favorites.length} Bookmarked`;
             }
         }
 
@@ -919,6 +934,14 @@
                 document.getElementById('fc-front-emoji').textContent = '⭐';
                 document.getElementById('fc-progress-counter').textContent = 'Card 0 of 0';
                 currentFlashcardIndex = 0;
+                
+                const starSvg = document.getElementById('fc-star-svg');
+                const starBtn = document.getElementById('fc-front-star-btn');
+                if (starSvg && starBtn) {
+                    starSvg.setAttribute('fill', 'none');
+                    starBtn.classList.remove('text-amber-500', 'dark:text-amber-400');
+                    starBtn.classList.add('text-slate-400', 'dark:text-slate-500');
+                }
                 return;
             }
 
@@ -941,15 +964,16 @@
                 document.getElementById('fc-front-emoji').textContent = item.emoji;
                 
                 // Favorite Button Front Update
+                const starSvg = document.getElementById('fc-star-svg');
                 const starBtn = document.getElementById('fc-front-star-btn');
                 if (isFavorited(item.id)) {
-                    starBtn.textContent = '★';
-                    starBtn.classList.add('text-amber-500');
-                    starBtn.classList.remove('text-slate-300');
+                    starSvg.setAttribute('fill', 'currentColor');
+                    starBtn.classList.add('text-amber-500', 'dark:text-amber-400');
+                    starBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
                 } else {
-                    starBtn.textContent = '☆';
-                    starBtn.classList.remove('text-amber-500');
-                    starBtn.classList.add('text-slate-300');
+                    starSvg.setAttribute('fill', 'none');
+                    starBtn.classList.remove('text-amber-500', 'dark:text-amber-400');
+                    starBtn.classList.add('text-slate-400', 'dark:text-slate-500');
                 }
 
                 // BACK SIDE DOM Updates
@@ -1280,17 +1304,6 @@
             }).join('');
         }
 
-        function closeScoreHistoryModal() {
-            document.getElementById('score-history-modal').classList.add('hidden');
-        }
-
-        function clearScoreHistory() {
-            scoreHistory = [];
-            localStorage.removeItem('igcse_idioms_scores');
-            updateBestScorePill();
-            showScoreHistoryModal();
-        }
-
         // --- KEYBOARD FLASHCARD ACCESSIBILITY CONTROLS ---
         function setupKeyboardControls() {
             document.addEventListener('keydown', (e) => {
@@ -1307,6 +1320,17 @@
                     stepFlashcard(1);
                 }
             });
+        }
+
+        function closeScoreHistoryModal() {
+            document.getElementById('score-history-modal').classList.add('hidden');
+        }
+
+        function clearScoreHistory() {
+            scoreHistory = [];
+            localStorage.removeItem('igcse_idioms_scores');
+            updateBestScorePill();
+            showScoreHistoryModal();
         }
 
         // --- DARK MODE SYSTEM ---
